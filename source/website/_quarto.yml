@@ -1,0 +1,76 @@
+project:
+  type: book
+  preview:
+    port: 4201
+    browser: true
+  render:
+  - '*.md'
+  - '*.qmd'
+  - '!LICENSE.md'
+  - '!README.md'
+  output-dir: ../../output/website
+  post-render: _extensions/inbo/flandersqmd-book/filters/post_render.R
+execute:
+  echo: false
+  warnings: true
+  errors: true
+  message: true
+  freeze: false
+  cache: false
+format:
+  flandersqmd-book-html: default
+  flandersqmd-book-pdf: default
+lang: nl-BE
+flandersqmd:
+  entity: INBO
+  level: 2
+  title: Bosreservaten
+  subtitle: subtitle
+  shorttitle: bosreservaten
+  author:
+  - name:
+      given: Arno
+      family: Thomaes
+    email: arno.thomaes@inbo.be
+    orcid: 0000-0001-5723-5976
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+    corresponding: true
+  reviewer:
+  - name:
+      given: Els
+      family: Lommelen
+    email: els.lommelen@inbo.be
+    orcid: 0000-0002-3481-5684
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  public_report: true
+  colophon: true
+  floatbarrier: section
+book:
+  downloads: pdf
+  open-graph: true
+  body-footer: '{{< footer >}}'
+  navbar:
+    pinned: true
+    right:
+    - icon: mastodon
+      href: https://mastodon.online/&#64;inbo
+    - icon: bluesky
+      href: https://bsky.app/profile/inbo.be
+    - icon: facebook
+      href: https://www.facebook.com/INBOVlaanderen/
+    left:
+    - text: Cover
+      file: index.md
+    - text: Aanbevelingen
+      file: aanbevelingen.md
+    - text: Inleiding
+      file: inleiding.md
+  chapters:
+  - index.md
+  - abstract.md
+  - aanbevelingen.md
+  - inleiding.md
+  - referenties.md
+bibliography: references.bib
