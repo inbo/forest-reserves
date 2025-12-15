@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using these metadata.
+title: "Forest reserves"
+authors:
+- given-names: Arno
+  family-names: Thomaes
+  affiliation: Research Institute for Nature and Forest (INBO)
+  orcid: 0000-0001-5723-5976
+keywords:
+- Forest reserve
+- Flanders
+- Belgium
+contact:
+- given-names: Arno
+  family-names: Thomaes
+  affiliation: Research Institute for Nature and Forest (INBO)
+  orcid: 0000-0001-5723-5976
+doi: ~
+license: CC BY 4.0
+repository-code: https://github.com/inbo/forest-reserves/
+type: software
+abstract: "Website that presents the results of the monitoring programme on strict
+  forest reserves in Flanders, Belgium."
