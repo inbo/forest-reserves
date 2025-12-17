@@ -46,6 +46,7 @@ flandersqmd:
   public_report: false
   colophon: true
   floatbarrier: section
+  year: 2026
 book:
   downloads: pdf
   open-graph: true
