@@ -19,7 +19,6 @@ execute:
   cache: false
 format:
   flandersqmd-book-html: default
-  flandersqmd-book-pdf: default
 lang: nl-BE
 flandersqmd:
   entity: INBO
@@ -44,7 +43,7 @@ flandersqmd:
     orcid: 0000-0002-3481-5684
     affiliation:
     - Instituut voor Natuur- en Bosonderzoek (INBO)
-  public_report: true
+  public_report: false
   colophon: true
   floatbarrier: section
 book:
