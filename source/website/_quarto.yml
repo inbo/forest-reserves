@@ -24,7 +24,7 @@ flandersqmd:
   entity: INBO
   level: 2
   title: Bosreservaten in Vlaanderen
-  subtitle: subtitle
+  subtitle:
   shorttitle: bosreservaten
   author:
   - name:
@@ -60,16 +60,27 @@ book:
     - icon: facebook
       href: https://www.facebook.com/INBOVlaanderen/
     left:
-    - text: Cover
+    - text: Home
       file: index.md
-    - text: Aanbevelingen
-      file: aanbevelingen.md
-    - text: Inleiding
-      file: inleiding.md
+    - text: Wat?
+      file: wat.md
+    - text: Reservaten
+      file: reservaten.qmd
+    - text: About
+      file: colophon.md
   chapters:
-  - index.md
+  - text: Home
+    file: index.md
+  - wat.md
+  - nietsdoen.md
+  - juridisch.md
+  - reservaten.qmd
+  - onderzoek.md
+  - internationaal.md
+  - cijfers.md
+  - meer.md
   - abstract.md
-  - aanbevelingen.md
-  - inleiding.md
   - referenties.md
+  - text: About
+    file: colophon.md
 bibliography: references.bib

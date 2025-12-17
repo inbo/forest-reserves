@@ -2,11 +2,11 @@
 toc: false
 ---
 
-{{< colophon >}}
+# Bosreservaten in Vlaanderen
 
-# Samenvatting {-}
+Vlaanderen telt in 2025 xxx integrale bosreservaten, met een totale oppervlakte van ...
 
-**TO DO**
+**TO DO:**
 
 Dummy reference to [@R].
 Only remove after including other references or after removing the
