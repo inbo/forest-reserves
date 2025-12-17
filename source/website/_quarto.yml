@@ -19,6 +19,8 @@ execute:
   cache: false
 format:
   flandersqmd-book-html: default
+  html:
+    number-sections: false
 lang: nl-BE
 flandersqmd:
   entity: INBO
