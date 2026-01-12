@@ -1,5 +1,5 @@
 project:
-  type: book
+  type: website
   preview:
     port: 4201
     browser: true
@@ -18,9 +18,7 @@ execute:
   freeze: false
   cache: false
 format:
-  flandersqmd-book-html: default
-  html:
-    number-sections: false
+  flandersqmd-site-html: default
 lang: nl-BE
 flandersqmd:
   entity: INBO
@@ -49,10 +47,14 @@ flandersqmd:
   colophon: true
   floatbarrier: section
   year: 2026
-book:
-  downloads: pdf
+  url: https://inbo.github.io/bosreservaten/
+website:
+  title: Bosreservaten in Vlaanderen
   open-graph: true
-  body-footer: '{{< footer >}}'
+  page-footer:
+    left: '{{< authors >}}'
+    center: '{{< inbo_info >}}'
+    right: '{{< colophon >}}'
   navbar:
     pinned: true
     right:
@@ -63,27 +65,24 @@ book:
     - icon: facebook
       href: https://www.facebook.com/INBOVlaanderen/
     left:
-    - text: Home
-      file: index.md
     - text: Wat?
       file: wat.md
     - text: Reservaten
       file: reservaten.qmd
     - text: About
       file: colophon.md
-  chapters:
-  - text: Home
-    file: index.md
-  - wat.md
-  - nietsdoen.md
-  - juridisch.md
-  - reservaten.qmd
-  - onderzoek.md
-  - internationaal.md
-  - cijfers.md
-  - meer.md
-  - abstract.md
-  - referenties.md
-  - text: About
-    file: colophon.md
+  sidebar:
+    contents:
+      - wat.md
+      - nietsdoen.md
+      - juridisch.md
+      - reservaten.qmd
+      - onderzoek.md
+      - internationaal.md
+      - cijfers.md
+      - meer.md
+      - abstract.md
+      - referenties.md
+      - text: About
+        file: colophon.md
 bibliography: references.bib
