@@ -45,10 +45,13 @@ All results below are based on the measurements in the circle plots.
 
 **Biomass**
 
-Figure 1 and 2 give the total volume per period for the living, dead standing and dead lying trees, Figure 1 as absolute values and Figure 2 relative.
+Figure 1 and 2 give the total volume per period for the living, dead standing and dead lying trees, @fig-volume as absolute values and Figure 2 relative.
 Figure 3 represents the carbon stock below and above ground of the living trees per period.
 
 ```{r}
+#| label: fig-volume
+#| fig-cap: "Volume per period for the living, dead standing and dead lying trees."
+
 #Plots
 ### biomassa
 #### Figure 1: volume
@@ -92,8 +95,6 @@ ggplotly(
   theme(panel.spacing = unit(2.5, "lines"))   )
 
 ```
-
-*Figure 1: Volume per period for the living, dead standing and dead lying trees.*
 
 ```{r}
 ggplotly(
