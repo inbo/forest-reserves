@@ -70,8 +70,8 @@ regeneration_by_plot_height_species <- regeneration_by_plot_height_species[regen
 ```
 
 ```{r}
-plotinfo_s <- plotinfo[plotinfo$forest_reserve == {{selected_reserve}},]
-metadata_s <- metadata[metadata$forest_reserve == {{selected_reserve}},]
+plotinfo_s <- plotinfo[plotinfo$forest_reserve == "{{selected_reserve}}",]
+metadata_s <- metadata[metadata$forest_reserve == "{{selected_reserve}}",]
 name <- metadata_s$Correct_name
 
 Nplots_F <- plotinfo_s %>%
@@ -82,7 +82,7 @@ Nplots <- Nplots_F %>% select(N, period)
 
 ```
 
-\##`r name`
+## `r name`
 
 This `r metadata_s$type` `r first(metadata_s$forest_complex)` covers `r first(metadata_s$reserve_area_ha)` ha, management has been abandoned since `r first(metadata_s$year_abandonment)` and official reserve status is since `r first(metadata_s$year_reserve)`.
 The vegetation type is `r first(metadata_s$vegetation_type)` (mean annual temperature: `r first(metadata_s$m_ann_temp)` °C and mean annual precipitation: `r first(metadata_s$m_ann_prec)` mm/y).
