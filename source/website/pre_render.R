@@ -8,7 +8,7 @@ reserves <- unique(plotinfo$forest_reserve)
 autoqmd_prepare(
   selected_reserve = reserves,
   label = gsub("\\s", ".", tolower(reserves)),
-  template = "fiche_reservaat.qmd",
+  template = "_fiche_reservaat.qmd",
   child_dir = "fiches_reservaat_qmd",
   qmd_file = "grafieken_per_reservaat.qmd"
 )
