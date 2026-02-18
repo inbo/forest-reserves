@@ -10,15 +10,13 @@ reserves <- unique(plotinfo$forest_reserve)
 reserves_lower <- gsub("\\s", "_", tolower(reserves))
 reserves_correct <- metadata[metadata$forest_reserve %in% reserves, "Correct_name"]
 
-
-for (i in seq_along(reserves)) {
-  knit_expand(
-    file = "_fiche_reservaat.qmd",
-    selected_reserve = reserves[i],
-    label = reserves_lower[i]
-  ) |>
-    writeLines(paste0("fiches_reservaat_qmd/", reserves_lower[i], ".qmd"))
-}
+autoqmd_generate_children(
+  selected_reserve = reserves,
+  label = gsub("\\s", "_", tolower(reserves)),
+  template = "_fiche_reservaat.qmd",
+  child_dir = "fiches_reservaat_qmd",
+  freeze = "label"
+)
 
 yml_text <- readLines("_quarto_template.yml")
 to_replace <- yml_text[grepl("<<<ADD RESERVES>>>", yml_text)]
