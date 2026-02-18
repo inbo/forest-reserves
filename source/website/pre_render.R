@@ -6,7 +6,7 @@ library(purrr)
 plotinfo <- read.csv2('../../data/plotinfo.csv', header = TRUE, dec = ',', sep = ';')
 metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';')
 
-reserves <- unique(plotinfo$forest_reserve)
+reserves <- sort(unique(plotinfo$forest_reserve))
 reserves_lower <- gsub("\\s", "_", tolower(reserves))
 reserves_correct <- metadata[metadata$forest_reserve %in% reserves, "Correct_name"]
 
