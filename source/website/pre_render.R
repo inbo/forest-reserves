@@ -18,6 +18,7 @@ autoqmd_generate_children(
   freeze = "label"
 )
 
+# replace "<<<ADD RESERVES>>>" by list of reserves in quarto
 yml_text <- readLines("_quarto_template.yml")
 to_replace <- yml_text[grepl("<<<ADD RESERVES>>>", yml_text)]
 to_add <- character(0)
