@@ -23,7 +23,7 @@ library(stringr)
 ```
 
 ```{r}
-
+setwd("C:/Users/els_lommelen/Documents/gitrepos/forest-reserves/source/website")
 #data inlezen en definieren
 carbon_by_plot <- read.csv2('../../data/carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
 dendro_by_diam_plot <- read.csv2('../../data/dendro_by_diam_plot.csv', header = TRUE, dec=',', sep=';')

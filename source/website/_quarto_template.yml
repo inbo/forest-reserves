@@ -83,38 +83,7 @@ website:
       - section: "Bosreservaten in cijfers"
         href: cijfers.md
         contents:
-          - text: Bos Ter Rijst
-            file: fiches_reservaat_qmd/everzwijnbad.qmd
-          - text: De heide
-            file: fiches_reservaat_qmd/withoefse_heide.qmd
-          - text: Bos t'Ename
-            file: fiches_reservaat_qmd/wijnendalebos.qmd
-          - text: Everzwijnbad
-            file: fiches_reservaat_qmd/heirnisse.qmd
-          - text: De Heirnisse
-            file: fiches_reservaat_qmd/jansheideberg.qmd
-          - text: Jansheideberg
-            file: fiches_reservaat_qmd/bos_terrijst.qmd
-          - text: Kersselaerspleyn
-            file: fiches_reservaat_qmd/pruikemakers.qmd
-          - text: Kluisbos
-            file: fiches_reservaat_qmd/liedekerke.qmd
-          - text: Het Kolmontbos
-            file: fiches_reservaat_qmd/sevendonck.qmd
-          - text: Liedekerkebos
-            file: fiches_reservaat_qmd/muizenbos.qmd
-          - text: Muizenbos
-            file: fiches_reservaat_qmd/kersselaerspleyn.qmd
-          - text: Pruikenmakers
-            file: fiches_reservaat_qmd/ename.qmd
-          - text: Sevendonck
-            file: fiches_reservaat_qmd/de_heide.qmd
-          - text: Wijnendalebos
-            file: fiches_reservaat_qmd/kluisbos.qmd
-          - text: Withoefse heide
-            file: fiches_reservaat_qmd/kolmont.qmd
-          - text: Zwaenepoel
-            file: fiches_reservaat_qmd/zwaenepoel.qmd
+          - <<<ADD RESERVES>>>
       - meer.md
       - abstract.md
       - referenties.md
