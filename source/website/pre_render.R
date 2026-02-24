@@ -19,14 +19,17 @@ autoqmd_generate_children(
 )
 
 # replace "<<<ADD RESERVES>>>" by list of reserves in quarto
-yml_text <- readLines("_quarto_template.yml")
+template_file <- "_quarto_template.yml"
+text_to_replace <- "<<<ADD RESERVES>>>"
+
+yml_text <- readLines(template_file)
 to_replace <- yml_text[grepl("<<<ADD RESERVES>>>", yml_text)]
 to_add <- character(0)
 for (i in seq_along(reserves)) {
   to_add <- c(
     to_add,
-    gsub("<<<ADD RESERVES>>>", paste("text:", reserves_correct[i]), to_replace),
-    gsub("- <<<ADD RESERVES>>>", paste0("  file: fiches_reservaat_qmd/", reserves_lower[i], ".qmd"), to_replace)
+    gsub(text_to_replace, paste("text:", reserves_correct[i]), to_replace),
+    gsub(paste0("- ", text_to_replace), paste0("  file: fiches_reservaat_qmd/", reserves_lower[i], ".qmd"), to_replace)
   )
 }
 place <- which(yml_text == to_replace)
