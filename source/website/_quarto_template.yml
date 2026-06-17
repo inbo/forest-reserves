@@ -10,7 +10,7 @@ project:
   - '!README.md'
   output-dir: ../../output/website
   pre-render: pre_render.R
-  post-render: _extensions/inbo/flandersqmd-book/filters/post_render.R
+  post-render: _extensions/flandersqmd-website/filters/post_render.R
 execute:
   echo: false
   warnings: true
@@ -19,7 +19,7 @@ execute:
   freeze: false
   cache: false
 format:
-  flandersqmd-site-html: default
+  flandersqmd-website-html: default
 lang: nl-BE
 flandersqmd:
   entity: INBO
@@ -50,21 +50,24 @@ flandersqmd:
   year: 2026
   url: https://inbo.github.io/bosreservaten/
 website:
-  title: Bosreservaten in Vlaanderen
-  open-graph: true
   page-footer:
     left: '{{< authors >}}'
     center: '{{< inbo_info >}}'
-    right: '{{< colophon >}}'
+    right: '{{< reference >}}'
   navbar:
-    pinned: true
-    right:
+    tools:
     - icon: mastodon
-      href: https://mastodon.online/&#64;inbo
+      href: https://mastodon.online/@inbo
     - icon: bluesky
       href: https://bsky.app/profile/inbo.be
     - icon: facebook
       href: https://www.facebook.com/INBOVlaanderen/
+    - icon: github
+      menu:
+      - text: Source Code
+        url:  https://github.com/inbo/flandersqmd-website
+      - text: Report a Bug
+        url:  https://github.com/inbo/flandersqmd-website/issues
     left:
     - text: Wat?
       file: wat.md
@@ -73,6 +76,7 @@ website:
     - text: About
       file: colophon.md
   sidebar:
+    style: "docked"
     contents:
       - wat.md
       - nietsdoen.md

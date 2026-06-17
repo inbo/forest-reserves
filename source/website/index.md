@@ -1,8 +1,7 @@
 ---
+title: Bosreservaten in Vlaanderen
 toc: false
 ---
-
-{{< title >}}
 
 Vlaanderen telt in 2025 xxx integrale bosreservaten, met een totale oppervlakte van ...
 

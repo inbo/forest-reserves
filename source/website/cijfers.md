@@ -1,8 +1,7 @@
 ---
+title: Bosreservaten in cijfers
 toc: false
 ---
-
-# Bosreservaten in cijfers {#sec-cijfers}
 
 Via deze interactieve tool kan je een aantal statistieken raadplegen.
 

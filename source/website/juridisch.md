@@ -1,8 +1,7 @@
 ---
+title: Juridisch
 toc: false
 ---
-
-# Juridisch
 
 <details>
 

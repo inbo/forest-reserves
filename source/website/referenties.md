@@ -1,8 +1,7 @@
 ---
+title: Referenties
 toc: false
 ---
-
-# Referenties {-}
 
 ::: {#refs}
 :::

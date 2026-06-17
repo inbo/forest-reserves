@@ -1,8 +1,7 @@
 ---
+title: Wat zijn ‘bosreservaten’?
 toc: false
 ---
-
-## Wat zijn ‘bosreservaten’?
 
 Bosreservaten zijn stukken bos die bewust niet beheerd worden.
 Ze hebben een dubbel doel.

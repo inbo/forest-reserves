@@ -1,8 +1,7 @@
 ---
+title: Nietsdoen en spontane ontwikkeling over voldoende oppervlakte
 toc: false
 ---
-
-# Nietsdoen en spontane ontwikkeling over voldoende oppervlakte
 
 In de bosreservaten wordt niet meer beheerd, ook niet als het bos een andere richting uitgaat dan we hadden gedacht of gehoopt.
 Als we de spontane ontwikkeling wetenschappelijk willen opvolgen is het belangrijk om vast te houden aan de oorspronkelijke keuze om niets te doen.

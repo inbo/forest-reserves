@@ -1,8 +1,7 @@
 ---
+title: Meer weten/ meer lezen
 toc: false
 ---
-
-# Meer weten/ meer lezen
 
 De resultaten uit het Vlaamse bosreservatenonderzoek worden zowel gepubliceerd in internationale wetenschappelijke tijdschriften, als in publicaties voor een breder publiek.
 Zo is er een nieuwsbrief waarin we jaarlijksde meest interessante resultaten toelichten.

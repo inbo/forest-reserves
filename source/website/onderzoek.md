@@ -1,15 +1,14 @@
 ---
+title: Onderzoek in de bosreservaten
 toc: false
 ---
-
-# Onderzoek in de bosreservaten
 
 Sinds 2000 voert het INBO systematisch onderzoek uit in de bosreservaten.
 Dit onderzoek is vooral toegespitst op veranderingen in de bosstructuur en de kruidlaag.
 Daarvoor isin elk reservaat een steekproef uitgezet : een netwerk van permanente steekproefcirkels en/of een zogenaamde ‘kernvlakte’.
 
 De steekproefcirkels liggen op een systematisch grid (dus op vaste afstanden van elkaar) en geven een goed beeld van hoe het reservaat in zijn geheel verandert doorheen de tijd.
-Een selectie van de resultaten vind je hieronder bij [Bosreservaten in cijfers @sec-cijfers].
+Een selectie van de resultaten vind je hieronder bij [Bosreservaten in cijfers](cijfers.md).
 
 In een kernvlakte wordt over een grotere oppervlakte (0,5 tot 10 ha) een volledige inventarisatieuitgevoerd.
 Deze gegevens worden gebruikt voor meer gedetailleerd onderzoek, bijvoorbeeld rond onderlinge relaties tussen bomen of de relatie tussen de boomlaag en de verjonging.
