@@ -1,0 +1,133 @@
+---
+title: Meetnet Spontane Dynamiek Bosreservaten
+toc: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(plotly)
+library(crosstalk)
+```
+
+## Resultaten
+
+::: panel-tabset
+## Biomassa
+
+```{r}
+setwd("C:/Users/els_lommelen/Documents/gitrepos/forest-reserves/data")
+stat_carbon <- read.csv2('carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
+stat_dendro <- read.csv2('dendro_by_plot.csv', header = TRUE, dec=',', sep=';')
+plotinfo <- read.csv2('plotinfo.csv', header = TRUE, dec=',', sep=';')
+
+plotinfo$forest_reserve <- as.factor(plotinfo$forest_reserve)
+
+stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
+   select(forest_reserve, period, BiomassAboveGr_t_ha, BiomassBelowGr_t_ha,
+           BiomassTotalLiving_t_ha, CarbonAboveGr_t_ha, CarbonBelowGr_t_ha,
+           CarbonTotalLiving_t_ha ) %>%
+  pivot_longer(cols = c("BiomassAboveGr_t_ha", "BiomassBelowGr_t_ha",
+           "BiomassTotalLiving_t_ha", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha",
+           "CarbonTotalLiving_t_ha"),
+           names_to = "label", values_to = "value") %>%
+  group_by(forest_reserve, period, label) %>%
+  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
+  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
+
+ stat_carbon_wide$forest_reserve <- fct_reorder(stat_carbon_wide$forest_reserve, stat_carbon_wide$mean_BiomassAboveGr_t_ha)
+
+```
+
+```{r}
+sd <- SharedData$new(stat_carbon_wide)
+
+bscols(widths = c(4, 4),
+       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
+       filter_checkbox("period", "Select period", sd, ~period))
+
+bscols(widths = c(6, 6),
+       sd %>%
+        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_BiomassAboveGr_t_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Above ground biomass (ton /ha)"),
+               yaxis = list(title = "Forest reserve")),
+       sd %>%
+        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_BiomassBelowGr_t_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Below ground biomass (ton /ha)"),
+               yaxis = list(title = "Forest reserve")))
+
+bscols(widths = c(6, 6),
+       sd %>%
+        plot_ly(x = ~mean_CarbonAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_CarbonAboveGr_t_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Above ground carbon (ton /ha)"),
+               yaxis = list(title = "Forest reserve")),
+       sd %>%
+        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Below ground carbon (ton /ha)"),
+               yaxis = list(title = "Forest reserve")))
+```
+
+## Dendrometerie
+
+```{r}
+
+stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
+
+stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %>%
+  select(forest_reserve, period, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
+  pivot_longer(cols = c("vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha"),
+           names_to = "label", values_to = "value") %>%
+  group_by(forest_reserve, period, label) %>%
+  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
+  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
+
+stat_dendro_wide$forest_reserve <- fct_reorder(stat_dendro_wide$forest_reserve, stat_dendro_wide$mean_vol_alive_m3_ha)
+```
+
+```{r}
+
+sd <- SharedData$new(stat_dendro_wide)
+
+bscols(widths = c(4, 4),
+       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
+       filter_checkbox("period", "Select period", sd, ~period))
+
+bscols(widths = c(6, 6),
+       sd %>%
+        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Volume living trees (m³ /ha)"),
+               yaxis = list(title = "Forest reserve")),
+       sd %>%
+        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Volume dead wood (m³ /ha)"),
+               yaxis = list(title = "Forest reserve")))
+
+bscols(widths = c(6, 6),
+       sd %>%
+        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_dead_standing_m3_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Volume standing dead wood (m³ /ha)"),
+               yaxis = list(title = "Forest reserve")),
+       sd %>%
+        plot_ly(x = ~mean_vol_log_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_log_m3_ha)) %>%
+        layout(legend = list(title = list(text = 'Period')),
+               xaxis = list(title = "Volume lying dead wood (m³ /ha)"),
+               yaxis = list(title = "Forest reserve")))
+```
+:::
