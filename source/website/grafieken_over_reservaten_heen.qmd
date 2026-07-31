@@ -48,19 +48,54 @@ bscols(widths = c(4, 4),
        filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
        filter_checkbox("period", "Select period", sd, ~period))
 
+# volgende code is qua logica gebaseerd op https://stackoverflow.com/questions/50921790/split-points-by-a-factor-in-a-plotly-scatter-plot met
+# forest_reserve = cluster
+# period = group
+# offset en x_location heb ik berekend in de plot-functie zelf omdat ik gehoopt had dat het dan zou aanpassen in functie van de selectie van de gebruiker, maar intussen snap ik het systeem beter en weet ik dat dat niet zo is.  Dus nadat ik een oplossing heb, kan die code evt. naar het samenstellen van de dataset verhuizen.
+
+# het draait, maar nog op te lossen is:
+
+# - bij het berekenen van de offset als (periode - 2) * 0.2 is het probleem dat bij Periode 3 van het onderste forest_reserve het label in de grafiek wegvalt.  Ik heb er nu 2.5 en 3 van gemaakt, wat als nadeel heeft dat periode wel verder onder de lijn staat, maar voorlopig heb ik er nog geen problemen bij gezien.  Dit finaal nog eens goed testen: blijft alles zichtbaar?
+
+# - als enkele bosreservaten geselecteerd worden, dan blijven de tussenliggende streepjes en labels staan in de grafiek.  De oorzaak is dat ik de factorlevels van forest_reserves gebruik om de locaties numeriek te berekenen (waarde voor Y en tickvals), beter zou zijn om de geselecteerde waarden oplopend te nummeren.  Maar op basis van het internet lijkt hier niet direct een oplossing voor te zijn want de vragen worden niet beantwoord:
+#    - https://stackoverflow.com/questions/74973243/accessing-the-selected-value-from-filter-select-or-shareddata-object-crosstalk-r
+#    - https://stackoverflow.com/questions/78873193/accessing-a-column-from-a-crosstalkshareddata-object-that-has-been-filtered-by
+
+# Omdat de website statisch gebouwd wordt en die selectie bij het raadplegen van de website door de gebruiker gebeurt, is het onwaarschijnlijk dat dit in de R-code aangepast kunnen worden, dus waarschijnlijk moet hiervoor javascript toegevoegd worden
+# Een gerelateerd issue met js: https://github.com/rstudio/crosstalk/issues/118
+# html en js raadplegen: F12 of rechtsklikken en voor inspecteren kiezen
+
+
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~(as.numeric(as.factor(forest_reserve)) + (period - 3) * 0.2), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_BiomassAboveGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Above ground biomass (ton /ha)"),
-               yaxis = list(title = "Forest reserve")),
+               yaxis = list(
+                 title = "Forest reserve",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(forest_reserve)))),
+                 ticktext = ~unique(sort(as.factor(forest_reserve)))#,
+                 #range = c(~min(as.numeric(as.factor(forest_reserve))) - 1, ~max(as.numeric(as.factor(forest_reserve))) + 1)
+               )
+        ),
        sd %>%
-        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~(as.numeric(as.factor(forest_reserve)) + (period - 2.5) * 0.2), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_BiomassBelowGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Below ground biomass (ton /ha)"),
-               yaxis = list(title = "Forest reserve")))
+               yaxis = list(
+                 title = "Forest reserve",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(forest_reserve)))),
+                 ticktext = ~unique(sort(as.factor(forest_reserve)))#,
+                 #range = c(~min(as.numeric(as.factor(forest_reserve))) - 1, ~max(as.numeric(as.factor(forest_reserve))) + 1)
+               )
+        )
+)
 
 bscols(widths = c(6, 6),
        sd %>%
