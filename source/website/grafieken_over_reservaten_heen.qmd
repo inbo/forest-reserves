@@ -66,6 +66,20 @@ bscols(widths = c(4, 4),
 # html en js raadplegen: F12 of rechtsklikken en voor inspecteren kiezen
 
 
+# in de html van de site:
+# - in selection tool komen geselecteerde items onder select multiple="multiple" en bij class="selectize-control multi" onder class="selectize-input items not-full has-options has-items", dit zijn telkens enkel de geselecteerde reservaten
+# - in grafiek staan meestal alle gridlijnen:
+#     - bij class="cartesianlayer", class="subplot xy", class="gridlayer", class="y"
+#     - bij class="cartesianlayer", class="subplot xy", class="yaxislayer-above", class="ytick" (ticks met labels)
+# - in 'script' staat volledige gegevensset en dit wordt niet aangepast bij selectie van items
+
+# getest of ik de as.numeric(as.factor(forest_reserve)) in y en tickvals van yaxis simpelweg kon vervangen door 1:n met n het aantal gekozen bosreservaten, maar dit geeft het label van bosreservaten 1:n in combinatie met de juiste gegevens die per periode op 1 lijn staan.
+
+# dus overblijvende opties zijn: keuzes opvragen met js en hernummeren, of andere optie zoeken voor grafiek, bv. bars die niet getoond worden
+
+# ... en na lang zoeken merk ik dat die tussenliggende reservaten ook al bij de originele grafiek zonder 'jitter' verschijnen, en bij andere grafiektypen (bv. bars), dus dit probleem heeft niks met de aanpassingen te maken.
+
+
 bscols(widths = c(6, 6),
        sd %>%
         plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~(as.numeric(as.factor(forest_reserve)) + (period - 3) * 0.2), type = 'scatter', split = ~period, mode = 'markers',
