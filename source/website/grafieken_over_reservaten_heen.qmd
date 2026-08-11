@@ -54,32 +54,6 @@ bscols(widths = c(4, 4),
 # period = group
 # y_location heb ik op basis van offset_period berekend in de plot-functie zelf omdat het anders misloopt met de sortering van de reservaten
 
-# het draait, maar nog op te lossen is:
-
-# - bij het berekenen van de offset als (periode - 2) * 0.2 is het probleem dat bij Periode 3 van het onderste forest_reserve het label in de grafiek wegvalt.  Ik heb er nu 2.5 van gemaakt, wat als nadeel heeft dat periode wel verder onder de lijn staat, maar voorlopig heb ik er nog geen problemen bij gezien.  Dit finaal nog eens goed testen: blijft alles zichtbaar?
-
-# - als enkele bosreservaten geselecteerd worden, dan blijven de tussenliggende streepjes en labels staan in de grafiek.  De oorzaak is dat ik de factorlevels van forest_reserves gebruik om de locaties numeriek te berekenen (waarde voor Y en tickvals), beter zou zijn om de geselecteerde waarden oplopend te nummeren.  Maar op basis van het internet lijkt hier niet direct een oplossing voor te zijn want de vragen worden niet beantwoord:
-#    - https://stackoverflow.com/questions/74973243/accessing-the-selected-value-from-filter-select-or-shareddata-object-crosstalk-r
-#    - https://stackoverflow.com/questions/78873193/accessing-a-column-from-a-crosstalkshareddata-object-that-has-been-filtered-by
-
-# Omdat de website statisch gebouwd wordt en die selectie bij het raadplegen van de website door de gebruiker gebeurt, is het onwaarschijnlijk dat dit in de R-code aangepast kunnen worden, dus waarschijnlijk moet hiervoor javascript toegevoegd worden
-# Een gerelateerd issue met js: https://github.com/rstudio/crosstalk/issues/118
-# html en js raadplegen: F12 of rechtsklikken en voor inspecteren kiezen
-
-
-# in de html van de site:
-# - in selection tool komen geselecteerde items onder select multiple="multiple" en bij class="selectize-control multi" onder class="selectize-input items not-full has-options has-items", dit zijn telkens enkel de geselecteerde reservaten
-# - in grafiek staan meestal alle gridlijnen:
-#     - bij class="cartesianlayer", class="subplot xy", class="gridlayer", class="y"
-#     - bij class="cartesianlayer", class="subplot xy", class="yaxislayer-above", class="ytick" (ticks met labels)
-# - in 'script' staat volledige gegevensset en dit wordt niet aangepast bij selectie van items
-
-# getest of ik de as.numeric(as.factor(forest_reserve)) in y en tickvals van yaxis simpelweg kon vervangen door 1:n met n het aantal gekozen bosreservaten, maar dit geeft het label van bosreservaten 1:n in combinatie met de juiste gegevens die per periode op 1 lijn staan.
-
-# dus overblijvende opties zijn: keuzes opvragen met js en hernummeren, of andere optie zoeken voor grafiek, bv. bars die niet getoond worden
-
-# ... en na lang zoeken merk ik dat die tussenliggende reservaten ook al bij de originele grafiek zonder 'jitter' verschijnen, en bij andere grafiektypen (bv. bars), dus dit probleem heeft niks met de aanpassingen te maken.
-
 
 bscols(widths = c(6, 6),
        sd %>%
