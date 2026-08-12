@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     name: "check project with checklist"
     env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
     permissions:
       contents: read
     steps:
-      - uses: inbo/actions/check_project@main
+      - name: "Check project with checklist"
+        uses: inbo/actions/check_project@main
