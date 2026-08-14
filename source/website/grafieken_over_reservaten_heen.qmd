@@ -92,13 +92,19 @@ bscols(widths = c(6, 6),
                 error_x = ~list(array = uci_diff_CarbonAboveGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Above ground carbon (ton /ha)"),
-               yaxis = list(title = "Forest reserve")),
+               yaxis = list(
+                 title = "Forest reserve",
+                 categoryorder = "category ascending" #redraw y-asis to omit unused forest_reserves
+               )),
        sd %>%
         plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Below ground carbon (ton /ha)"),
-               yaxis = list(title = "Forest reserve")))
+               yaxis = list(
+                 title = "Forest reserve",
+                 categoryorder = "category ascending"
+              )))
 ```
 
 ## Dendrometerie
