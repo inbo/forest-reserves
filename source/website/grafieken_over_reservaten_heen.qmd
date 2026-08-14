@@ -57,7 +57,7 @@ bscols(widths = c(4, 4),
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~(as.numeric(as.factor(forest_reserve)) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~(as.numeric(forest_reserve) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_BiomassAboveGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Above ground biomass (ton /ha)"),
@@ -71,7 +71,7 @@ bscols(widths = c(6, 6),
                )
         ),
        sd %>%
-        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~(as.numeric(as.factor(forest_reserve)) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~(as.numeric(forest_reserve) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_BiomassBelowGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Period')),
                xaxis = list(title = "Below ground biomass (ton /ha)"),
