@@ -186,6 +186,7 @@ function levelcss (entity)
     css = css .. '  --heading-color: #356196;'
     css = css .. '  --text-color: #595959;'
     css = css .. '  --link-color: #C04384;'
+    css = css .. '  --link-footer: #f5c1dc;'
     css = css .. '  --missing-color: #C63526;'
   else
     css = css .. '  --navbar-background: #FFED00;'
@@ -194,6 +195,7 @@ function levelcss (entity)
     css = css .. '  --heading-color: #333332;'
     css = css .. '  --text-color: #000000;'
     css = css .. '  --link-color: #0055CC;'
+    css = css .. '  --link-footer: #0055CC;'
     css = css .. '  --missing-color: #FF0000;'
   end
   css = css .. '  --bs-body-font-weight: 300;'

@@ -1,6 +1,7 @@
 {
   "license": "CC BY 4.0",
   "access_right": "open",
+  "language": "nld",
   "title": "Forest reserves",
   "description": "<p>Website that presents the results of the monitoring programme on strict forest reserves in Flanders, Belgium.<\/p>",
   "keywords": [
@@ -9,7 +10,6 @@
     "Belgium"
   ],
   "upload_type": "software",
-  "language": "eng",
   "contributors": [
     {
       "name": "Thomaes, Arno",
