@@ -505,7 +505,8 @@ ggplotly(ggplot(dendro_by_diam_plot_species_s_fig2, aes(x= dbh_class_5cm)) +
 
 De volgende figuren geven het volume aan dood hout, apart voor staand en liggend dood hout.
 @fig-doodhouttreesp-{{label}} toont de absolute volumes voor elke soort terwijl @fig-doodhoutrel-{{label}} de relatieve aandelen van de verschillende soorten in het totaal volume weergeeft.
-Enkel de acht soorten met het hoogste totaal volume aan dood hout in de meeste recente periode worden apart weergegeven in de grafieken.`r first(metadata_s$remarkDeadW)`
+Enkel de acht soorten met het hoogste totaal volume aan dood hout in de meeste recente periode worden apart weergegeven in de grafieken.
+`r first(metadata_s$remarkDeadW)`
 
 ```{r}
 #| label: fig-doodhouttreesp-{{label}}
@@ -609,17 +610,6 @@ ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) +
   scale_fill_manual(values =  mycolor) +
   facet_wrap(~label),   tooltip = "text")
 
-
-
-ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) + 
-  geom_bar(aes(fill = name_reclassFULLNL, weight = value)) + 
-  geom_point(dead_wood_combined, mapping = aes(x= period, y= mean), color = "black") +
-  geom_errorbar(dead_wood_combined, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
-  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name=legend$Per) +
-  guides(fill=guide_legend(title=legend$TS)) + 
-  scale_fill_manual(values =  mycolor) +
-  facet_wrap(~label)      )
-
 ```
 
 ```{r}
@@ -640,7 +630,8 @@ ggplotly(ggplot(dead_wood_species_combined, aes(x= period, y = value)) +
 ```
 
 De volgende figuren focussen op de [verteringsklassen van het liggend dood hout](/Verteringsklassen.html).
-@fig-verteringskl-{{label}} toont de verdeling over de verschillende verteringsklassen per periode terwijl @fig-verteringsklrel-{{label}} het relatieve aandeel weergeeft van alle verteringsklassen bij het liggend dood hout.`r first(metadata_s$remarkDeadW)`
+@fig-verteringskl-{{label}} toont de verdeling over de verschillende verteringsklassen per periode terwijl @fig-verteringsklrel-{{label}} het relatieve aandeel weergeeft van alle verteringsklassen bij het liggend dood hout.
+`r first(metadata_s$remarkDeadW)`
 
 ```{r}
 #| label: fig-verteringskl-{{label}}
