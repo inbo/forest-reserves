@@ -1,0 +1,38 @@
+---
+toc: false
+execute:
+  cache: true
+  freeze: auto
+---
+
+# Verteringsklassen van dood hout
+
+Om de vertering van dood hout te bestuderen wordt het ingedeeld in zogenaamde 
+Verteringsklassen. De afbakening van deze klassen wordt internationaal gebruikt en 
+zijn gebasseerd op visuele karakteristieken en de zachtheid van het hout. Voor 
+dit laatste wordt gekeken hoe diep een mes kan doordringen in het hout.  
+
+```{r}
+#| label: setup-{{label}}
+#| include: FALSE
+
+library(tidyr)
+library(dplyr)
+library(kableExtra)
+library(tidyverse)
+library(knitr)
+
+```
+
+```{r}
+
+afbraakklassen <- read.csv2('../../data/afbraakklassen.csv', header = TRUE)
+
+afbraakklassen2 <- afbraakklassen %>%
+  kable(row_names = NULL, escape = FALSE) %>%     # escape toevoegen t.o.v. uw versie
+  kable_styling(full_width = F, bootstrap_options = c("hover", "condensed"))  # bootstrap_options toevoegen t.o.v. uw versie
+
+afbraakklassen2
+
+```
+
