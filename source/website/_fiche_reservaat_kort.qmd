@@ -26,9 +26,8 @@ library(stringr)
 ```
 
 ```{r}
-setwd("C:/Users/arno_thomaes/Documents/forest-reserves/source/website")
 #data inlezen en definieren
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+metadata <- read.csv2('../../../data/metadata.csv', header = TRUE, dec=',', sep=';')
 
 ```
 
