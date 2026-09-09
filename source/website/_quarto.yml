@@ -35,7 +35,48 @@ flandersqmd:
     orcid: 0000-0001-5723-5976
     affiliation:
     - Instituut voor Natuur- en Bosonderzoek (INBO)
-    corresponding: true
+  - name:
+      given: Luc
+      family: De Keersmaeker
+    email: luc.dekeersmaeker@inbo.be
+    orcid: 0000-0001-9709-512X
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Marc
+      family: Esprit
+    email: marc.esprit@inbo.be
+    orcid: 0000-0003-4947-6459
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Stefaan
+      family: Goessens
+    email: stefaan.goessens@inbo.be
+    orcid: 0009-0001-7461-3868
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Anja
+      family: Leyman
+    email: anja.leyman@inbo.be
+    orcid: 0000-0002-0292-6582
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Peter
+      family: Van de Kerckhove
+    email: peter.vandeKerckhove@inbo.be
+    orcid: 0000-0002-8058-6798
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Kris
+      family: Vandekerkhove
+    email: kris.vandekerkhove@inbo.be
+    orcid: 0000-0003-1954-692X
+    affiliation:
+    - Instituut voor Natuur- en Bosonderzoek (INBO)
   reviewer:
   - name:
       given: Els
@@ -65,62 +106,64 @@ website:
     - icon: github
       menu:
       - text: Source Code
-        url:  https://github.com/inbo/flandersqmd-website
+        url: https://github.com/inbo/flandersqmd-website
       - text: Report a Bug
-        url:  https://github.com/inbo/flandersqmd-website/issues
+        url: https://github.com/inbo/flandersqmd-website/issues
     left:
-    - text: Wat?
-      file: wat.md
-    - text: Reservaten
+    - text: Home
+      file: index.md
+    - text: Lijst met reservaten
       file: reservaten.qmd
   sidebar:
-    style: "docked"
+    style: docked
     contents:
-      - wat.md
-      - nietsdoen.md
-      - juridisch.md
-      - reservaten.qmd
-      - onderzoek.md
-      - internationaal.md
-      - section: "Bosreservaten in cijfers"
-        href: cijfers.md
+      - index.md
+      - cijfers.md
+      - grafieken_over_reservaten_heen.qmd
+      - section: "Lijst met reservaten"
+        href: reservaten.qmd
         contents:
         # The below content between START and END comments is auto-generated
         # Do not change manually
         # ADD-RESERVES-START
-          - text: Bos Ter Rijst
-            file: fiches_reservaat_qmd/bos_terrijst.qmd
-          - text: De heide
-            file: fiches_reservaat_qmd/de_heide.qmd
           - text: Bos t'Ename
             file: fiches_reservaat_qmd/ename.qmd
-          - text: Everzwijnbad
-            file: fiches_reservaat_qmd/everzwijnbad.qmd
+          - text: Bos Ter Rijst
+            file: fiches_reservaat_qmd/bos_terrijst.qmd
+          - text: Coolhembos
+            file: fiches_reservaat_qmd/coolhembos.qmd
           - text: De Heirnisse
             file: fiches_reservaat_qmd/heirnisse.qmd
+          - text: Hannecartbos
+            file: fiches_reservaat_qmd/hannecartbos.qmd
           - text: Jansheideberg
             file: fiches_reservaat_qmd/jansheideberg.qmd
-          - text: Kersselaerspleyn
-            file: fiches_reservaat_qmd/kersselaerspleyn.qmd
           - text: Kluisbos
             file: fiches_reservaat_qmd/kluisbos.qmd
-          - text: Het Kolmontbos
+          - text: Kolmontbos
             file: fiches_reservaat_qmd/kolmont.qmd
           - text: Liedekerkebos
             file: fiches_reservaat_qmd/liedekerke.qmd
+          - text: Meerdaalwoud - De Heide
+            file: fiches_reservaat_qmd/de_heide.qmd
+          - text: Meerdaalwoud - Everzwijnbad
+            file: fiches_reservaat_qmd/everzwijnbad.qmd
+          - text: Meerdaalwoud - Pruikenmakers
+            file: fiches_reservaat_qmd/pruikemakers.qmd
           - text: Muizenbos
             file: fiches_reservaat_qmd/muizenbos.qmd
-          - text: Pruikenmakers
-            file: fiches_reservaat_qmd/pruikemakers.qmd
-          - text: Sevendonck
+          - text: Rodebos
+            file: fiches_reservaat_qmd/rodebos.qmd
+          - text: Sevendonk
             file: fiches_reservaat_qmd/sevendonck.qmd
+          - text: Walenbos
+            file: fiches_reservaat_qmd/walenbos.qmd
           - text: Wijnendalebos
             file: fiches_reservaat_qmd/wijnendalebos.qmd
           - text: Withoefse heide
             file: fiches_reservaat_qmd/withoefse_heide.qmd
-          - text: Zwaenepoel
+          - text: Zonienwoud - Joseph Zwaenepoel Reservaat
             file: fiches_reservaat_qmd/zwaenepoel.qmd
         # ADD-RESERVES-END
       - meer.md
-      - referenties.md
 bibliography: references.bib

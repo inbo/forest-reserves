@@ -1,0 +1,115 @@
+---
+toc: false
+execute:
+  cache: false
+  freeze: auto
+---
+
+```{r}
+#| label: setup-{{label}}
+#| include: FALSE
+
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      fig.width = 10)
+
+library(dplyr)  
+library(knitr)
+library(kableExtra)
+library(tidyr)
+library(ggplot2)
+library(INBOtheme)
+theme_set(theme_inbo(base_size = 12, transparent = FALSE))
+library(plotly)
+library(stringr)
+
+```
+
+```{r}
+setwd("C:/Users/arno_thomaes/Documents/forest-reserves/source/website")
+#data inlezen en definieren
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+
+```
+
+```{r}
+#list of legend names
+legendENG <- data.frame(x=1)
+legendENG$SoT <- "Status of trees"
+legendENG$Vol <- "Volume (m³ /ha)"
+legendENG$Per <- "Period"
+legendENG$TCSLT <- "Total carbon stock of living trees (ton /ha)"
+legendENG$TS <- "Tree species"
+legendENG$SN <- "Stem number (#/ha)"
+legendENG$SN1000 <- "Stem number 1.000 * (#/ha)"
+legendENG$BA <- "Basal area (m²/ha)"
+legendENG$DC <- "Diameter class (5 cm)"
+legendENG$VL <- "Volume lying (m³/ha)"
+legendENG$DS <- "Decay stage"
+legendENG$VLDW <- "Volume lying dead wood (m³/ha)"
+legendENG$NRTS <- "Number of regenerating trees and shrubs (#/ha)"
+legendENG$HC <- "Height class (cm)"
+
+legendENG$Liv <- "Living"
+legendENG$DST <- "Dead standing"
+legendENG$DL <- "Dead lying"
+legendENG$VSDW <- "Volume standing dead wood (m³/ha)"
+legendENG$Y <- "Year"
+legendENG$NP <- "Number of plots"
+
+legendNL <- data.frame(x=1)
+legendNL$SoT <- "Status van de bomen"
+legendNL$Vol <- "Volume (m³ /ha)"
+legendNL$Per <- "Periode"
+legendNL$TCSLT <- "Totale koolstofvoorraad van de levende bomen (ton /ha)"
+legendNL$TS <- "Boomsoort"
+legendNL$SN <- "Stamtal (#/ha)"
+legendNL$SN1000 <- "Stamtal 1.000 * (#/ha)"
+legendNL$BA <- "Grondvlak (m²/ha)"
+legendNL$DC <- "Diameterklasse (5 cm)"
+legendNL$VL <- "Volume liggend (m³/ha)"
+legendNL$DS <- "Afbraakklassen"
+legendNL$VLDW <- "Volume liggend dood hout (m³/ha)"
+legendNL$NRTS <- "Aantal regenererende bomen en struiken (#/ha)"
+legendNL$HC <- "Hoogteklasse (cm)"
+legendNL$Liv <- "Levend"
+legendNL$DST <- "Dood staand"
+legendNL$DL <- "Dood liggend"
+legendNL$VSDW <- "Volume staand dood hout (m³/ha)"
+legendNL$Y <- "Jaar"
+legendNL$NP <- "Aantal plots"
+
+legend <- legendNL #ENG ################################ NL of ENG
+
+
+```
+
+```{r}
+metadata_s <- metadata[metadata$forest_reserve == "{{selected_reserve}}",]
+
+name <- metadata_s$Correct_name
+
+```
+
+## `r name`
+
+Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
+Het beheer `r ifelse(first(metadata_s$managment)==1,"","is sinds")` `r first(metadata_s$year_abandonmentNL)` `r ifelse(first(metadata_s$managment)==1,"","stopgezet")` en het gebied kreeg het officiële reservaatstatuut sinds `r first(metadata_s$year_reserveNL)`.
+Het vegetatietype is `r first(metadata_s$vegetation_typeNL)`.
+De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` °C en de gemiddelde jaarlijkse neerslag `r first(metadata_s$m_ann_prec)` mm. `r first(metadata_s$Beheer)` In dit reservaat worden enkel kernvlakte(s) opgevolgd en geen cirkelplots.
+De data van de kernvlaktes worden binnenkort toegevoegd aan deze site.
+
+```{r}
+#| label: fig-foto-kaart{{label}}
+#| layout-ncol: 2
+#| fig.align: "center"
+#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte (b)."
+#| fig-subcap: true
+
+
+foto <- paste0(name,".jpg")
+kaart <- paste0(name,"k.jpg")
+
+knitr::include_graphics(here::here(foto))
+knitr::include_graphics(here::here(kaart))
+```

@@ -1,7 +1,7 @@
 ---
 toc: false
 execute:
-  cache: true
+  cache: false
   freeze: auto
 ---
 
@@ -26,7 +26,7 @@ library(stringr)
 ```
 
 ```{r}
-setwd("C:/Users/els_lommelen/Documents/gitrepos/forest-reserves/source/website")
+setwd("C:/Users/arno_thomaes/Documents/forest-reserves/source/website")
 #data inlezen en definieren
 carbon_by_plot <- read.csv2('../../data/carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
 dendro_by_diam_plot <- read.csv2('../../data/dendro_by_diam_plot.csv', header = TRUE, dec=',', sep=';')
@@ -38,13 +38,13 @@ regeneration_by_plot <- read.csv2('../../data/regeneration_by_plot.csv', header 
 regeneration_by_plot_height <- read.csv2('../../data/regeneration_by_plot_height.csv', header = TRUE, dec=',', sep=';')
 regeneration_by_plot_height_species <- read.csv2('../../data/regeneration_by_plot_height_species.csv', header = TRUE, dec=',', sep=';')
 plotinfo <- read.csv2('../../data/plotinfo.csv', header = TRUE, dec=',', sep=';')
-all_names2 <- read.csv2('../../data/all_names2.csv', header = TRUE, dec=',', sep=';')
+all_names3 <- read.csv2('../../data/all_names3.csv', header = TRUE, dec=',', sep=';')
 metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
 
-dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names2, by= "name_sc")
+dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names3, by= "name_sc")
 
-logs_by_decay_plot_species <- left_join(logs_by_decay_plot_species, all_names2, by= "name_sc")
-regeneration_by_plot_height_species <- left_join(regeneration_by_plot_height_species, all_names2, by= "name_sc")
+logs_by_decay_plot_species <- left_join(logs_by_decay_plot_species, all_names3, by= "name_sc")
+regeneration_by_plot_height_species <- left_join(regeneration_by_plot_height_species, all_names3, by= "name_sc")
 
 dendro_by_diam_plot_species$period <- as.factor(dendro_by_diam_plot_species$period)
 logs_by_decay_plot$period <- as.factor(logs_by_decay_plot$period)
@@ -53,6 +53,8 @@ plotinfo$period <- as.factor(plotinfo$period)
 regeneration_by_plot_height_species$period <- as.factor(regeneration_by_plot_height_species$period)
 dendro_by_plot$period <- as.factor(dendro_by_plot$period)
 carbon_by_plot$period <- as.factor(carbon_by_plot$period)
+
+plotinfo$forest_reserve <- ifelse(plotinfo$forest_reserve == "Kersselaerspleyn", "Zwaenepoel", plotinfo$forest_reserve)
 
 dendro_by_diam_plot_species$dbh_class_5cm <- str_remove(dendro_by_diam_plot_species$dbh_class_5cm, " cm") %>%
     str_replace(" - ", "-")
@@ -76,8 +78,68 @@ regeneration_by_plot_height_species <- regeneration_by_plot_height_species[regen
 ```
 
 ```{r}
+#list of legend names
+legendENG <- data.frame(x=1)
+legendENG$SoT <- "Status of trees"
+legendENG$Vol <- "Volume (m³/ha)"
+legendENG$Per <- "Period"
+legendENG$TCSLT <- "Total carbon stock of living trees (ton C/ha)"
+legendENG$TS <- "Tree species"
+legendENG$SN <- "Stem number (#/ha)"
+legendENG$SN1000 <- "Stem number 1000 * (#/ha)"
+legendENG$BA <- "Basal area (m²/ha)"
+legendENG$DC <- "Diameter class (5 cm)"
+legendENG$VL <- "Volume lying (m³/ha)"
+legendENG$DS <- "Decay stage"
+legendENG$VLDW <- "Volume lying dead wood (m³/ha)"
+legendENG$NRTS <- "Number of regenerating trees and shrubs (#/ha)"
+legendENG$HC <- "Height class (cm)"
+
+legendENG$Liv <- "Living"
+legendENG$DST <- "Dead standing"
+legendENG$DL <- "Dead lying"
+legendENG$VSDW <- "Volume standing dead wood (m³/ha)"
+legendENG$Y <- "Year"
+legendENG$NP <- "Number of plots"
+
+legendNL <- data.frame(x=1)
+legendNL$SoT <- "Status van de bomen"
+legendNL$Vol <- "Volume (m³/ha)"
+legendNL$Per <- "Periode"
+legendNL$TCSLT <- "Koolstofvoorraad (ton C/ha)"
+legendNL$TS <- "Boomsoort"
+legendNL$SN <- "Stamtal (#/ha)"
+legendNL$SN1000 <- "Stamtal 1000 * (#/ha)"
+legendNL$BA <- "Grondvlak (m²/ha)"
+legendNL$DC <- "Diameterklasse (5 cm)"
+legendNL$VL <- "Volume liggend (m³/ha)"
+legendNL$DS <- "Verteringsklassen"
+legendNL$VLDW <- "Liggend dood hout"
+legendNL$NRTS <- "Aantal jonge bomen en struiken (#/ha)"
+legendNL$HC <- "Hoogteklasse (cm)"
+legendNL$Liv <- "Levend"
+legendNL$DST <- "Dood staand"
+legendNL$DL <- "Dood liggend"
+legendNL$VSDW <- "Staand dood hout"
+legendNL$Y <- "Jaar"
+legendNL$NP <- "Aantal plots"
+
+legend <- legendNL #ENG ################################ NL of ENG
+
+
+```
+
+```{r}
 plotinfo_s <- plotinfo[plotinfo$forest_reserve == "{{selected_reserve}}",]
 metadata_s <- metadata[metadata$forest_reserve == "{{selected_reserve}}",]
+
+#Kluisbos
+Kluisbosbeheer <- c(1574, 1575, 1576, 1577, 1578, 1579, 1580, 1581, 1582, 1583, 
+1584, 1585, 1586, 1587, 1588, 1589, 1590, 1591, 1592, 1593, 1594, 1607, 1608, 1609,
+1610, 1611, 1612, 1613, 1614, 1615, 1616, 1617, 1618, 1619, 1620, 1621, 1622, 1623,
+1624, 1625, 1626, 1627, 1628)
+plotinfo_s <- plotinfo_s[!plotinfo_s$plot_id %in% Kluisbosbeheer,]
+
 name <- metadata_s$Correct_name
 
 Nplots_F <- plotinfo_s %>%
@@ -90,14 +152,32 @@ Nplots <- Nplots_F %>% select(N, period)
 
 ## `r name`
 
-This `r metadata_s$type` `r first(metadata_s$forest_complex)` covers `r first(metadata_s$reserve_area_ha)` ha, management has been abandoned since `r first(metadata_s$year_abandonment)` and official reserve status is since `r first(metadata_s$year_reserve)`.
-The vegetation type is `r first(metadata_s$vegetation_type)` (mean annual temperature: `r first(metadata_s$m_ann_temp)` °C and mean annual precipitation: `r first(metadata_s$m_ann_prec)` mm/y).
-The dendrometric measurements were performed in the following years:
+Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
+Het beheer `r ifelse(first(metadata_s$managment)==1,"","is sinds")` `r first(metadata_s$year_abandonmentNL)` `r ifelse(first(metadata_s$managment)==1,"","stopgezet")` en het gebied kreeg het officiële reservaatstatuut sinds `r first(metadata_s$year_reserveNL)`.
+Het vegetatietype is `r first(metadata_s$vegetation_typeNL)`.
+De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` °C en de gemiddelde jaarlijkse neerslag `r first(metadata_s$m_ann_prec)` mm. `r first(metadata_s$Beheer)`
+
+```{r}
+#| label: fig-foto-kaart{{label}}
+#| layout-ncol: 2
+#| fig.align: "center"
+#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte (b)."
+#| fig-subcap: true
+#| warning: false
+
+foto <- paste0(name,".jpg")
+kaart <- paste0(name,"k.jpg")
+
+knitr::include_graphics(here::here(foto))
+knitr::include_graphics(here::here(kaart))
+```
+
+De dendrometrische metingen werden uitgevoerd in de volgende jaren:
 
 ```{r}
 #Periods
 Nplots_S <- Nplots_F %>%
-  select(Period = period, Year = year, No_Plots = N)
+  rename(Periode = period, Jaar = year, 'Aantal plots' = N) 
 
 kable(Nplots_S, "html") %>% 
   kable_styling(full_width = F)
@@ -105,16 +185,19 @@ kable(Nplots_S, "html") %>%
 
 ```
 
-All results below are based on the measurements in the circle plots.
+Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
+`r first(metadata_s$remark)`
 
-**Biomass**
+::: panel-tabset
+## Biomassa {#biomassa}
 
-Figure 1 and 2 give the total volume per period for the living, dead standing and dead lying trees, @fig-volume-{{label}} as absolute values and Figure 2 relative.
-Figure 3 represents the carbon stock below and above ground of the living trees per period.
+@fig-volume-{{label}} en @fig-volumerel-{{label}} geven het totaal volume per periode voor de levende, staande dode en liggende dode bomen, @fig-volume-{{label}} in absolute waarden en @fig-volumerel-{{label}} in relatieve waarden.
+@fig-carbon-{{label}} geeft de boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode.
 
 ```{r}
 #| label: fig-volume-{{label}}
-#| fig-cap: "Volume per period for the living, dead standing and dead lying trees."
+#| fig-cap: "Volume per periode voor de levende, dode staande en dode liggende bomen. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| warning: false
 
 #Plots
 ### biomassa
@@ -135,7 +218,7 @@ dendro_by_plot_s_stat2 <- dendro_by_plot_s_stat %>%
   summarise(value= sum(value), N=first(N))
 
 dendro_by_plot_s_stat2$value <- dendro_by_plot_s_stat2$value /dendro_by_plot_s_stat2$N
-  
+
 #Voor summary neem plots samen en bereken mean
 dendro_by_plot_s_summ <- dendro_by_plot_s_stat %>%
   group_by(period) %>%
@@ -147,67 +230,95 @@ dendro_by_plot_s_summ$uci <- dendro_by_plot_s_summ$vol_tot + dendro_by_plot_s_su
 
 # namen labels verwijderen
 dendro_by_plot_s_stat2$label <- recode(dendro_by_plot_s_stat2$label, 
-vol_alive_m3_ha = "Living", vol_dead_standing_m3_ha = "Dead standing", vol_log_m3_ha = "Dead lying")
+vol_alive_m3_ha = legend$Liv, vol_dead_standing_m3_ha = legend$DST, vol_log_m3_ha = legend$DL)
 
 ggplotly(
   ggplot(dendro_by_plot_s_stat2, aes(x= period)) + 
-  geom_bar(aes(fill = label, weight = value)) + 
-  geom_point(dendro_by_plot_s_summ, mapping = aes(x= period, y= vol_tot), color = "black") +
+  geom_bar(aes(fill = label, weight = value, 
+           text = paste0(label, ": ", round(value, 1), " m³/ha"))) + 
+  geom_point(dendro_by_plot_s_summ, mapping = aes(x= period, y= vol_tot, text = paste0("Totaal: ", round(vol_tot, 1), " m³/ha [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
   geom_errorbar(dendro_by_plot_s_summ, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
-   guides(fill=guide_legend(title="Status of trees")) +  
-  scale_y_continuous(name="Volume (m³ /ha)") + scale_x_discrete(name="Period") +
-  theme(panel.spacing = unit(2.5, "lines"))   )
+   guides(fill=guide_legend(title=legend$SoT)) +  
+  scale_y_continuous(name=legend$Vol) + scale_x_discrete(name=legend$Per) +
+  theme(panel.spacing = unit(2.5, "lines")),   tooltip = "text")
 
 ```
 
 ```{r}
+#| label: fig-volumerel-{{label}}
+#| fig-cap: "Aandeel van de levende bomen, het staand en liggend dood hout in het totale volume. Het cijfer boven de grafiek geeft het totaal volume. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| warning: false
+
 ggplotly(
   ggplot(dendro_by_plot_s_stat2, aes(x= period)) + 
-  geom_col(position = 'fill', aes(y = value, fill = label)) + 
-  scale_y_continuous(name="", labels = scales::percent_format()) + scale_x_discrete(name="Period") + 
-  guides(fill=guide_legend(title="Status of trees")) +
-  geom_text(dendro_by_plot_s_summ, mapping = aes(label = round(vol_tot,1), x = period, y = 1.05)) )
+  geom_col(position = 'fill', aes(y = value, fill = label, 
+           text = paste0(label, ": ", round(value/dendro_by_plot_s_summ$vol_tot*100, 1), "%"))) + 
+  scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) + scale_x_discrete(name=legend$Per) + 
+  guides(fill=guide_legend(title=legend$SoT)) +
+  geom_text(dendro_by_plot_s_summ, mapping = aes(label = round(vol_tot,1), x = period, y = 1.05)),   tooltip = "text")
 
 #  color: scale fill manual
 ```
 
-*Figure 2: Relative volume per period for the living, dead standing and dead lying trees.*
-
 ```{r}
+#| label: fig-carbon-{{label}}
+#| fig-cap: "Boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| warning: false
 
 carbon_by_plot_s_stat <- carbon_by_plot[carbon_by_plot$plot_id %in% plotinfo_s$plot_id,] %>%
-  select("period", "CarbonTotalLiving_t_ha")  %>%
+  select("period", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha")  %>%
   left_join(Nplots, by="period")
 
 #Voor summary neem plots samen en bereken mean
 carbon_by_plot_s_summ <- carbon_by_plot_s_stat %>%
   group_by(period) %>%
-  summarise(sum= sum(CarbonTotalLiving_t_ha), ci= 1.96*sd(CarbonTotalLiving_t_ha), N= first(N)) 
+  summarise(CarbonAboveGr_t_ha= sum(CarbonAboveGr_t_ha), 
+            CarbonBelowGr_t_ha= sum(CarbonBelowGr_t_ha), N= first(N)) 
 
-carbon_by_plot_s_summ$CarbonTotalLiving_t_ha <- carbon_by_plot_s_summ$sum /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$lci <- carbon_by_plot_s_summ$CarbonTotalLiving_t_ha - carbon_by_plot_s_summ$ci/sqrt(carbon_by_plot_s_summ$N)
-carbon_by_plot_s_summ$uci <- carbon_by_plot_s_summ$CarbonTotalLiving_t_ha + carbon_by_plot_s_summ$ci/sqrt(carbon_by_plot_s_summ$N)
+carbon_by_plot_s_summ$Bovengronds <- carbon_by_plot_s_summ$CarbonAboveGr_t_ha /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$Ondergronds <- carbon_by_plot_s_summ$CarbonBelowGr_t_ha /carbon_by_plot_s_summ$N
+
+carbon_by_plot_s_summ <- carbon_by_plot_s_summ %>%
+    pivot_longer(cols = c("Bovengronds", "Ondergronds"),
+           names_to = "label", values_to = "value")
+
+carbon_by_plot_s_stat$C_tot <- carbon_by_plot_s_stat$CarbonAboveGr_t_ha +
+  carbon_by_plot_s_stat$CarbonBelowGr_t_ha
+
+carbon_by_plot_s_summ_summ <- carbon_by_plot_s_stat %>%
+  group_by(period) %>%
+  summarise(sum= sum(C_tot), ci= 1.96*sd(C_tot), N= first(N)) 
+
+
+carbon_by_plot_s_summ_summ$C_tot <- carbon_by_plot_s_summ_summ$sum /carbon_by_plot_s_summ_summ$N
+carbon_by_plot_s_summ_summ$lci <- carbon_by_plot_s_summ_summ$C_tot - carbon_by_plot_s_summ_summ$ci/sqrt(carbon_by_plot_s_summ_summ$N)
+carbon_by_plot_s_summ_summ$uci <- carbon_by_plot_s_summ_summ$C_tot + carbon_by_plot_s_summ_summ$ci/sqrt(carbon_by_plot_s_summ_summ$N)
 
 ggplotly(
   ggplot(carbon_by_plot_s_summ, aes(x= period)) + 
-  geom_bar(aes(weight = CarbonTotalLiving_t_ha)) + 
-  geom_point(mapping = aes(x= period, y= CarbonTotalLiving_t_ha), color = "black") +
-  geom_errorbar(mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
-  scale_y_continuous(name="Total carbon stock of living trees (ton /ha)") + scale_x_discrete(name="Period") +
-  theme(panel.spacing = unit(2.5, "lines"))   )
+  geom_bar(aes(fill = label, weight = value, 
+           text = paste0(label, ": ", round(value, 1), " ton C/ha"))) + 
+  geom_point(carbon_by_plot_s_summ_summ, mapping = aes(x= period, y= C_tot, text = paste0("Totaal: ", round(C_tot, 1), " ton C/ha [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
+  geom_errorbar(carbon_by_plot_s_summ_summ, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
+   guides(fill=guide_legend(title="")) +  
+  scale_y_continuous(name=legend$TCSLT) + scale_x_discrete(name=legend$Per) +
+  theme(panel.spacing = unit(2.5, "lines")),   tooltip = "text")
 
 ```
 
-*Figure 3: Total carbon stock of living trees per period.*
+## Levende bomen {#levende-bomen}
 
-**Living trees**
-
-The figures below represent the species composition of the living trees.
-Stem number, basal area and volume are shown for each Period.
-Figure 1 gives values in absolute numbers and Figure 2 relative share in the total.
-The eight tree species shown have the highest total living volume in the most recent period.
+Onderstaande figuren tonen de soortensamenstelling van de levende bomen.
+Stamtal, grondvlak en volume worden getoond per periode.
+@fig-soortenlevend-{{label}} geeft de absolute waarden en @fig-soortenlevendrel-{{label}} het relatief aandeel van de verschillende soorten in het totaal.
+Enkel de acht soorten met het hoogste levende volume in de meeste recente periode worden apart weergegeven in de grafieken.
 
 ```{r}
+#| label: fig-soortenlevend-{{label}}
+#| fig-cap: "Boomsoortensamenstelling van de levende bomen per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-height: 6
+#| warning: false
+
 #Plots
 ### Living trees
 #### Figure 1: species composition
@@ -217,8 +328,8 @@ dendro_by_diam_plot_species_s <- dendro_by_diam_plot_species[dendro_by_diam_plot
 
 # neem boomsoorten samen die samenhoren
 dendro_by_diam_plot_species_s_stat <- dendro_by_diam_plot_species_s %>%
-  group_by(period, name_reclass, plot_id) %>%
-  summarise(name_sc= first(name_reclass), color= first(color), StemNumber= 
+  group_by(period, name_reclassFULLNL, plot_id) %>%
+  summarise(name_reclassFULLNL= first(name_reclassFULLNL), color= first(color), StemNumber= 
           sum(stem_number_alive_ha), BasalArea= sum(basal_area_alive_m2_ha), Volume= sum(vol_alive_m3_ha)) 
 
 #Voor summary neem alle bomen samen
@@ -230,8 +341,8 @@ dendro_by_diam_plot_species_s_stat_summary <- dendro_by_diam_plot_species_s_stat
 
 # neem plots samen en bereken mean
 dendro_by_diam_plot_species_s_stat <- dendro_by_diam_plot_species_s_stat %>%
-  group_by(period, name_reclass) %>%
-  summarise(name_sc= first(name_reclass), color= first(color), StemNumber= 
+  group_by(period, name_reclassFULLNL) %>%
+  summarise(name_reclassFULLNL= first(name_reclassFULLNL), color= first(color), StemNumber= 
           sum(StemNumber), BasalArea= sum(BasalArea), Volume= sum(Volume)) %>%
   left_join(Nplots, by="period")
 
@@ -260,124 +371,147 @@ dendro_by_diam_plot_species_s_8sp <- dendro_by_diam_plot_species_s_stat %>%
                 label=="Volume") %>%
   top_n(8, value)
 
-dendro_by_diam_plot_species_s_stat_8sp <-  dendro_by_diam_plot_species_s_stat[dendro_by_diam_plot_species_s_stat$name_sc %in% dendro_by_diam_plot_species_s_8sp$name_sc,]
+dendro_by_diam_plot_species_s_stat_8sp <-  dendro_by_diam_plot_species_s_stat[dendro_by_diam_plot_species_s_stat$name_reclassFULLNL %in% dendro_by_diam_plot_species_s_8sp$name_reclassFULLNL,]
 
-dendro_by_diam_plot_species_s_stat <-    dendro_by_diam_plot_species_s_stat[!(dendro_by_diam_plot_species_s_stat$name_sc %in% dendro_by_diam_plot_species_s_8sp$name_sc),] %>%
+dendro_by_diam_plot_species_s_stat <-    dendro_by_diam_plot_species_s_stat[!(dendro_by_diam_plot_species_s_stat$name_reclassFULLNL %in% dendro_by_diam_plot_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period, label) %>%
-  summarise(name_sc=" Other species", color="#282A72", value=sum(value)) %>%
+  summarise(name_reclassFULLNL=" Andere boomsoorten", color="#282A72", value=sum(value)) %>%
   rbind(dendro_by_diam_plot_species_s_stat_8sp) %>%
-  group_by(period, label, name_sc) %>%
+  group_by(period, label, name_reclassFULLNL) %>%
   summarise(color=first(color), value=sum(value)) 
 
 # namen labels verwijderen
 dendro_by_diam_plot_species_s_stat$label <- recode(dendro_by_diam_plot_species_s_stat$label, 
-                                                    BasalArea = "Basal area (m²/ha)", StemNumber = "Stem number (#/ha)", Volume = "Volume (m³/ha)")
+                                                    BasalArea = legend$BA, StemNumber = legend$SN, Volume = "Volume (m³/ha)")
 dendro_by_diam_plot_species_s_stat_summary$label <- recode(dendro_by_diam_plot_species_s_stat_summary$label, 
-                                                           BasalArea = "Basal area (m²/ha)", StemNumber = "Stem number (#/ha)", Volume = "Volume (m³/ha)")
+                                                           BasalArea = legend$BA, StemNumber = legend$SN, Volume = "Volume (m³/ha)")
 
-mycolor <- unique(dendro_by_diam_plot_species_s_stat$color[ order(dendro_by_diam_plot_species_s_stat$name_sc)])
+mycolor <- unique(dendro_by_diam_plot_species_s_stat$color[ order(dendro_by_diam_plot_species_s_stat$name_reclassFULLNL)])
 #color
 
 ggplotly(
   ggplot(dendro_by_diam_plot_species_s_stat, aes(x= period)) + 
-  geom_bar(aes(fill = name_sc, weight = value)) + 
-  geom_point(dendro_by_diam_plot_species_s_stat_summary, mapping = aes(x= period, y= mean), color = "black") +
+  geom_bar(aes(fill = name_reclassFULLNL, weight = value, 
+           text = paste0(name_reclassFULLNL, ": ", round(value, 1)))) + 
+  geom_point(dendro_by_diam_plot_species_s_stat_summary, mapping = aes(x= period, y= mean, text = paste0("Totaal: ", round(mean, 1), " [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
   geom_errorbar(dendro_by_diam_plot_species_s_stat_summary, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
-  scale_y_continuous(name="") + scale_x_discrete(name="Period") +
+  scale_y_continuous(name="") + scale_x_discrete(name=legend$Per) +
   scale_fill_manual(values =  mycolor) +
-  guides(fill=guide_legend(title="Tree species")) +
-  facet_wrap(~factor(label,c("Stem number (#/ha)", "Basal area (m²/ha)", "Volume (m³/ha)") ), scales = "free") +
-  theme(panel.spacing = unit(2.5, "lines"))   )
+  guides(fill=guide_legend(title=legend$TS)) +
+  facet_wrap(~factor(label,c(legend$SN, legend$BA, "Volume (m³/ha)") ), scales = "free") +
+  theme(panel.spacing = unit(2.5, "lines")),   tooltip = "text")
+
 
 ```
 
-*Figure 1: Absolute species composition of the living trees per period.*
-
 ```{r}
+#| label: fig-soortenlevendrel-{{label}}
+#| fig-cap: "Aandeel van de verschillende soorten voor de levende bomen per periode. Het cijfer boven de grafiek geeft het totaal."
+#| fig-height: 6
+#| warning: false
+
 ggplotly(
   ggplot(dendro_by_diam_plot_species_s_stat, aes(x= period, y=value)) + 
-  geom_col(position = 'fill', aes(fill = name_sc)) + 
-  scale_y_continuous(name="", labels = scales::percent_format()) + scale_x_discrete(name="Period") + 
+  geom_col(position = 'fill', aes(fill = name_reclassFULLNL, 
+           text = paste0(name_reclassFULLNL, ": ", round(value/dendro_by_diam_plot_species_s_stat_summary$mean*100, 1), "%"))) + 
+  scale_y_continuous(name="Relatieve samenstelling (%)", labels = scales::percent_format()) + scale_x_discrete(name=legend$Per) + 
   scale_fill_manual(values =  mycolor) +
-  guides(fill=guide_legend(title="Tree species")) +
-  facet_wrap(~factor(label,c("Stem number (#/ha)", "Basal area (m²/ha)", "Volume (m³/ha)") )) +
-  geom_text(dendro_by_diam_plot_species_s_stat_summary, mapping = aes(label = round(mean,1), x = period, y = 1.05)) )
+  guides(fill=guide_legend(title=legend$TS)) +
+  facet_wrap(~factor(label,c(legend$SN, legend$BA, "Volume (m³/ha)") )) +
+  geom_text(dendro_by_diam_plot_species_s_stat_summary, mapping = aes(label = round(mean,1), x = period, y = 1.05)),   tooltip = "text")
 
 #  color: scale fill manual
 ```
 
-*Figure 2: Relative species composition of the living trees per period.*
-
-Figure 3 and 4 represent the diameter distribution of the number of living trees.
-Figure 3 focus on a comparison over the periods while Figure 4 gives the different tree species.
-Figure 5 gives the volume distribution over the diameter range.
+@fig-diamdistperiod-{{label}} en @fig-diamdisttreesp-{{label}} tonen de diameterverdeling van het aantal levende bomen.
+@fig-diamdistperiod-{{label}} focust op de vergelijking over de periodes terwijl @fig-diamdisttreesp-{{label}} de verschillende soorten toont.
+@fig-diamdistvol-{{label}} geeft de volumeverdeling over de diameterrange.
 
 ```{r}
-#### Figure 2: Diam distribution
+#| label: fig-diamdistperiod-{{label}}
+#| fig-cap: "Diameterverdeling van de levende bomen per periode."
+#| warning: false
 
-dendro_by_diam_plot_species_s_8sp <-  dendro_by_diam_plot_species_s[dendro_by_diam_plot_species_s$name_reclass %in% dendro_by_diam_plot_species_s_8sp$name_sc,] %>%
-  select(period, plot_id, dbh_class_5cm, name_sc= name_reclass, color, stem_number_alive_ha, vol_alive_m3_ha)
+dendro_by_diam_plot_species_s_8sp <-  dendro_by_diam_plot_species_s[dendro_by_diam_plot_species_s$name_reclassFULLNL %in% dendro_by_diam_plot_species_s_8sp$name_reclassFULLNL,] %>%
+  select(period, plot_id, dbh_class_5cm, name_reclassFULLNL= name_reclassFULLNL, color, stem_number_alive_ha, vol_alive_m3_ha)
 
-dendro_by_diam_plot_species_s_fig2 <-  dendro_by_diam_plot_species_s[!(dendro_by_diam_plot_species_s$name_reclass %in% dendro_by_diam_plot_species_s_8sp$name_sc),] %>%
+dendro_by_diam_plot_species_s_fig2 <-  dendro_by_diam_plot_species_s[!(dendro_by_diam_plot_species_s$name_reclassFULLNL %in% dendro_by_diam_plot_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period, plot_id, dbh_class_5cm) %>%
-  summarise(name_sc=" Other species", color= "#282A72",  stem_number_alive_ha=sum(stem_number_alive_ha),  
+  summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72",  stem_number_alive_ha=sum(stem_number_alive_ha),  
   vol_alive_m3_ha=sum(vol_alive_m3_ha)) %>%
   rbind(dendro_by_diam_plot_species_s_8sp) %>%
-  group_by(period, name_sc, color, dbh_class_5cm) %>%
+  group_by(period, name_reclassFULLNL, color, dbh_class_5cm) %>%
   summarise(stem_number_alive_ha=sum(stem_number_alive_ha), vol_alive_m3_ha=sum(vol_alive_m3_ha)) %>%
   left_join(Nplots, by="period")
 
 dendro_by_diam_plot_species_s_fig2$stem_number_alive_ha <- dendro_by_diam_plot_species_s_fig2$stem_number_alive_ha /dendro_by_diam_plot_species_s_fig2$N
 dendro_by_diam_plot_species_s_fig2$vol_alive_m3_ha <- dendro_by_diam_plot_species_s_fig2$vol_alive_m3_ha /dendro_by_diam_plot_species_s_fig2$N
 
-mycolor <- unique(dendro_by_diam_plot_species_s_fig2$color[ order(dendro_by_diam_plot_species_s_fig2$name_sc)])
+mycolor <- unique(dendro_by_diam_plot_species_s_fig2$color[ order(dendro_by_diam_plot_species_s_fig2$name_reclassFULLNL)])
 #color
 
-ggplotly(ggplot(dendro_by_diam_plot_species_s_fig2, aes(x= dbh_class_5cm)) + 
-  geom_bar(aes(fill = period, weight = stem_number_alive_ha), position = position_dodge2(width = 0.9, preserve = "single")) + 
-  scale_y_continuous(name="Stem number (#/ha)") + scale_x_discrete(name="Diameter class (5 cm)") +
-  guides(fill=guide_legend(title="Period")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) )
+dendro_by_diam_plot_species_s_fig3 <- dendro_by_diam_plot_species_s_fig2 %>%
+  group_by(period, dbh_class_5cm) %>%
+  summarise(stem_number_alive_ha = sum(stem_number_alive_ha))
+
+ggplotly(ggplot(dendro_by_diam_plot_species_s_fig3, aes(x= dbh_class_5cm)) + 
+  geom_bar(aes(fill = period, weight = stem_number_alive_ha, 
+           text = paste0(dbh_class_5cm, " cm, period = ", period, ": ", round(stem_number_alive_ha, 1), " #/ha")), position = position_dodge2(width = 0.9, preserve = "single")) + 
+  scale_y_continuous(name=legend$SN) + scale_x_discrete(name=legend$DC) +
+  guides(fill=guide_legend(title=legend$Per)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)),   tooltip = "text")
+
+periodnr <- length(levels(as.factor(as.numeric(dendro_by_diam_plot_species_s_fig2$period))))
+my_height <- 4*periodnr + 2
 
 ```
 
-*Figure 3: Diameter distribution of the living trees per period.*
-
 ```{r}
+#| label: fig-diamdisttreesp-{{label}}
+#| fig-cap: "Diameterverdeling van de levende bomen per soort en periode."
+#| fig-height: !expr my_height
+#| warning: false
 
 ggplotly(ggplot(dendro_by_diam_plot_species_s_fig2, aes(x= dbh_class_5cm)) + 
-  geom_bar(aes(fill = name_sc, weight = stem_number_alive_ha)) + 
-  scale_y_continuous(name="Stem number (#/ha)") + scale_x_discrete(name="Diameter class (5 cm)") +
+  geom_bar(aes(fill = name_reclassFULLNL, weight = stem_number_alive_ha, 
+           text = paste0(name_reclassFULLNL, ": ", round(stem_number_alive_ha, 1), " #/ha"))) + 
+  scale_y_continuous(name=legend$SN) + scale_x_discrete(name=legend$DC) +
   scale_fill_manual(values =  mycolor) +
-  guides(fill=guide_legend(title="Tree species")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  facet_wrap(~period) )
+  guides(fill=guide_legend(title=legend$TS)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), 
+        panel.spacing.y = unit(4, "line")) +
+  facet_wrap(~period, nrow= periodnr),   tooltip = "text")
+
 ```
 
-*Figure 4: Diameter distribution of the living trees per tree species and per period.*
-
 ```{r}
+#| label: fig-diamdistvol-{{label}}
+#| fig-cap: "Diameterverdeling van het volume van de levende bomen per soort en periode."
+#| fig-height: !expr my_height
+#| warning: false
+
 ggplotly(ggplot(dendro_by_diam_plot_species_s_fig2, aes(x= dbh_class_5cm)) + 
-  geom_bar(aes(fill = name_sc, weight = vol_alive_m3_ha)) + 
-  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name="Diameter class (5 cm)") +
+  geom_bar(aes(fill = name_reclassFULLNL, weight = vol_alive_m3_ha, 
+           text = paste0(name_reclassFULLNL, ": ", round(vol_alive_m3_ha, 1), " m³/ha"))) + 
+  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name=legend$DC) +
   scale_fill_manual(values =  mycolor) +
-  guides(fill=guide_legend(title="Tree species")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  facet_wrap(~period) )
+  guides(fill=guide_legend(title=legend$TS)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), 
+        panel.spacing.y = unit(4, "line")) +
+  facet_wrap(~period, nrow= periodnr),   tooltip = "text")
 ```
 
-*Figure 5: Diameter distribution of the volume of living trees per tree species and per period.*
+## Dood hout {#dood-hout}
 
-**Dead wood**
-
-The following figures give the volume of dead wood, seperatly for standing and lying dead wood.
-Figure 6 shows the absolute volumes for each tree species while Figure 7 gives the relative share in the total amount.
-The eight tree species shown have the highest total volume of dead wood in the most recent period.
+De volgende figuren geven het volume aan dood hout, apart voor staand en liggend dood hout.
+@fig-doodhouttreesp-{{label}} toont de absolute volumes voor elke soort terwijl @fig-doodhoutrel-{{label}} de relatieve aandelen van de verschillende soorten in het totaal volume weergeeft.
+Enkel de acht soorten met het hoogste totaal volume aan dood hout in de meeste recente periode worden apart weergegeven in de grafieken.`r first(metadata_s$remarkDeadW)`
 
 ```{r}
-### Dead wood
-#### Figure 1: Species composition
-
+#| label: fig-doodhouttreesp-{{label}}
+#| fig-cap: "Boomsoortensamenstelling van het dood hout (liggend en staand) per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-height: 6
+#| warning: false
 
 # standing
 # summary per plot
@@ -419,7 +553,7 @@ dead_wood_combined <- rbind(logs_by_decay_plot_s_statdead, dendro_by_diam_plot_s
 
 #per tree species standing
 dendro_by_diam_plot_species_s_statdead2 <- dendro_by_diam_plot_species_s %>%
-  group_by(period, name_reclass) %>%
+  group_by(period, name_reclassFULLNL) %>%
   summarise(color= first(color), Volume_standing= sum(vol_dead_standing_m3_ha)) %>%
   left_join(Nplots, by= "period")
 
@@ -427,7 +561,7 @@ dendro_by_diam_plot_species_s_statdead2$value <- dendro_by_diam_plot_species_s_s
 
 #per tree species lying
 logs_by_decay_plot_species_s_statdead <- logs_by_decay_plot_species[logs_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
-  group_by(period, name_reclass) %>%
+  group_by(period, name_reclassFULLNL) %>%
   summarise(color= first(color), Volume_lying= sum(vol_log_m3_ha)) %>%
   left_join(Nplots, by= "period")
 
@@ -442,61 +576,76 @@ dead_wood_species_combined <- rbind(logs_by_decay_plot_species_s_statdead, dendr
 
 # reduceren naar 8 soorten, soorten met hoogste totaal volume van laatset periode
 dead_wood_species_8sp <- dead_wood_species_combined %>%
-  group_by(period, name_reclass) %>%
+  group_by(period, name_reclassFULLNL) %>%
   summarise(value=sum(value)) %>%
   dplyr::filter(period==max(as.character(dead_wood_species_combined$period))) %>%
   top_n(8, value)
 
-dead_wood_species_combined_8sp <-  dead_wood_species_combined[dead_wood_species_combined$name_reclass %in% dead_wood_species_8sp$name_reclass,]
+dead_wood_species_combined_8sp <-  dead_wood_species_combined[dead_wood_species_combined$name_reclassFULLNL %in% dead_wood_species_8sp$name_reclassFULLNL,]
 
-dead_wood_species_combined <-  dead_wood_species_combined[!(dead_wood_species_combined$name_reclass %in% dead_wood_species_8sp$name_reclass),] %>%
+dead_wood_species_combined <-  dead_wood_species_combined[!(dead_wood_species_combined$name_reclassFULLNL %in% dead_wood_species_8sp$name_reclassFULLNL),] %>%
   group_by(period, label) %>%
-  summarise(name_reclass=" Other species", color= "#282A72", value=sum(value)) %>%
+  summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72", value=sum(value)) %>%
   rbind(dead_wood_species_combined_8sp) %>%
-  group_by(period, label, name_reclass) %>%
+  group_by(period, label, name_reclassFULLNL) %>%
   summarise(color=first(color), value=sum(value)) 
 
 #labelnamen definieren
 dead_wood_species_combined$label <- recode(dead_wood_species_combined$label, 
-                                           Volume_lying = "Volume lying dead wood (m³/ha)", Volume_standing = "Volume standing dead wood (m³/ha)" )
+                                           Volume_lying = legend$VLDW , Volume_standing = legend$VSDW)
 dead_wood_combined$label <- recode(dead_wood_combined$label, 
-                                           Volume_lying = "Volume lying dead wood (m³/ha)", Volume_standing = "Volume standing dead wood (m³/ha)" )
+                                           Volume_lying = legend$VLDW , Volume_standing = legend$VSDW)
 
-mycolor <- unique(dead_wood_species_combined$color[ order(dead_wood_species_combined$name_reclass)])
+mycolor <- unique(dead_wood_species_combined$color[ order(dead_wood_species_combined$name_reclassFULLNL)])
 
 ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) + 
-  geom_bar(aes(fill = name_reclass, weight = value)) + 
+  geom_bar(aes(fill = name_reclassFULLNL, weight = value, 
+           text = paste0(name_reclassFULLNL, ": ", round(value, 1), " m³/ha"))) + 
+  geom_point(dead_wood_combined, mapping = aes(x= period, y= mean, 
+           text = paste0("Totaal: ", round(mean, 1), " m³/ha [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
+  geom_errorbar(dead_wood_combined, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
+  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name=legend$Per) +
+  guides(fill=guide_legend(title=legend$TS)) + 
+  scale_fill_manual(values =  mycolor) +
+  facet_wrap(~label),   tooltip = "text")
+
+
+
+ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) + 
+  geom_bar(aes(fill = name_reclassFULLNL, weight = value)) + 
   geom_point(dead_wood_combined, mapping = aes(x= period, y= mean), color = "black") +
   geom_errorbar(dead_wood_combined, mapping =aes(ymin = lci, ymax=  uci), width=0.05, color = "black") +
-  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name="Period") +
-  guides(fill=guide_legend(title="Tree species")) + 
+  scale_y_continuous(name="Volume (m³/ha)") + scale_x_discrete(name=legend$Per) +
+  guides(fill=guide_legend(title=legend$TS)) + 
   scale_fill_manual(values =  mycolor) +
-  facet_wrap(~label) )
-
-
+  facet_wrap(~label)      )
 
 ```
 
-*Figure 6: Absolute volume of the lying and standing dead wood per tree species.*
-
 ```{r}
+#| label: fig-doodhoutrel-{{label}}
+#| fig-cap: "Aandeel van de verschillende soorten in het dode hout (liggend en staand)  per periode. Het cijfer boven de grafiek geeft het totaal volume."
+#| fig-height: 6
+#| warning: false
 
 ggplotly(ggplot(dead_wood_species_combined, aes(x= period, y = value)) + 
-           geom_col(position = 'fill', aes(fill = name_reclass)) + 
-           scale_y_continuous(name="", labels = scales::percent_format()) +
-           scale_x_discrete(name="Period") +
+           geom_col(position = 'fill', aes(fill = name_reclassFULLNL, 
+           text = paste0(name_reclassFULLNL, ": ", round(value/dead_wood_combined$mean*100, 1), "%"))) + 
+           scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) +
+           scale_x_discrete(name=legend$Per) +
            scale_fill_manual(values =  mycolor) +
-           guides(fill=guide_legend(title="Tree species")) + 
+           guides(fill=guide_legend(title=legend$TS)) + 
            geom_text(dead_wood_combined, mapping = aes(label = round(mean,1), x = period, y = 1.05)) +
-           facet_wrap(~label))
+           facet_wrap(~label),   tooltip = "text")
 ```
 
-*Figure 7: Relative volume of the lying and standing dead wood per tree species1.*
-
-The next figures focus on the decay stages of the lying dead wood.
-Figure 8 shows the absolute shift in decay stages between periods while Figure 9 represents the relative share of each decay stage in the lying dead wood.
+De volgende figuren focussen op de [verteringsklassen van het liggend dood hout](/Verteringsklassen.html).
+@fig-verteringskl-{{label}} toont de verdeling over de verschillende verteringsklassen per periode terwijl @fig-verteringsklrel-{{label}} het relatieve aandeel weergeeft van alle verteringsklassen bij het liggend dood hout.`r first(metadata_s$remarkDeadW)`
 
 ```{r}
+#| label: fig-verteringskl-{{label}}
+#| fig-cap: "Volume van het liggende dode hout per verteringsklasse en periode, in absolute cijfers."
+#| warning: false
 
 #### Figure 3: Decay stage
 logs_by_decay_plot_species_s_statdead2 <- logs_by_decay_plot_species[logs_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
@@ -524,55 +673,61 @@ levels(logs_by_decay_plot_species_s_statdead2$decaystage_code) <-
 
 
 ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= decaystage_code)) + 
-  geom_bar(aes(weight = Volume, fill = period), position = position_dodge2(width = 0.9, preserve = "single")) + 
-  guides(fill=guide_legend(title="Period")) +   
-  scale_y_continuous(name="Volume lying (m³/ha)") + 
-  scale_x_discrete(name="Decay stage"))
+  geom_bar(aes(weight = Volume, fill = period, 
+           text = paste0(decaystage_code, ", period = ", period, ": ", round(Volume, 1), " m³/ha")), position = position_dodge2(width = 0.9, preserve = "single")) + 
+  guides(fill=guide_legend(title=legend$Per)) +   
+  scale_y_continuous(name=legend$VL) + 
+  scale_x_discrete(name=legend$DS),   tooltip = "text")
 
 #geom_point(mapping = aes(y= Volume), color = "black", position = position_dodge2(width = 0.9, preserve = #"single")) +
 #  geom_errorbar(mapping =aes(ymin = lci, ymax=  uci), color = "black", position = position_dodge2(width=0.9, #preserve = "single")) +
 
 ```
 
-*Figure 8: Absolute volumes of lying dead wood given by decay stage and period. U = decay stage unknown.*
-
 ```{r}
+#| label: fig-verteringsklrel-{{label}}
+#| fig-cap: "Aandeel van de verschillende verteringsklassen in het liggende dode hout per periode. Het cijfer boven de grafiek geeft het totaal volume."
+#| warning: false
 
 volsum <- logs_by_decay_plot_species_s_statdead2 %>%
   group_by(period) %>%
   summarise(Volume_lying= sum(Volume))
 
-logs_by_decay_plot_species_s_statdead2$title <- "Volume lying dead wood (m³/ha)"
+logs_by_decay_plot_species_s_statdead2$title <- legend$VLDW 
 
 
 ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= period, y = Volume)) + 
-           geom_col(position = 'fill', aes(fill = decaystage_code)) + 
+           geom_col(position = 'fill', aes(fill = decaystage_code, 
+           text = paste0(decaystage_code, ": ", round(Volume/volsum$Volume_lying*100, 1), "%"))) + 
            scale_fill_brewer(palette = "Dark2") +
-           scale_y_continuous(name="", labels = scales::percent_format()) +
-           scale_x_discrete(name="Period") +
-           guides(fill=guide_legend(title="Decay stage")) + 
+           scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) +
+           scale_x_discrete(name=legend$Per) +
+           guides(fill=guide_legend(title=legend$DS)) + 
            geom_text(volsum, mapping = aes(label = round(Volume_lying,1), x = period, y = 1.05)) + 
-           facet_wrap(~title))
+           facet_wrap(~title),   tooltip = "text")
 ```
 
-*Figure 9: Relative volumes of lying dead wood given by decay stage and period. U = decay stage unknown.*
+## Verjonging {#verjonging}
 
-**Regeneration**
+Onder verjonging verstaan we alle jonge bomen en struiken met een diameter op borsthoogte van minder dan 5 cm.
+Ze wordt hier voorgesteld in 3 klassen: \<30, 30-50, 50-200 en \>200 cm.
 
-Figure 10 and 11 represent the regeneration of each tree species per period.
-Figure 10 gives absolute values and Figure 11 relative.
-The eight tree species shown have the highest stem number in the most recent period.
-Figure 12 focus on the height distribution of the regenerating tree species.
+@fig-bosverjonging-{{label}} en @fig-bosverjongingrel-{{label}} geven de verjonging weer van de verschillende soorten en periodes.
+@fig-bosverjonging-{{label}} toont de absolute waarden en @fig-bosverjongingrel-{{label}} de relatieve.
+@fig-bosverjonginghoogte-{{label}} focust op de hoogteverdeling van de verjongende soorten.
+Enkel de acht soorten met het hoogste stamtal in de meest recente periode worden apart weergegeven in de grafieken.
 
 ```{r}
-### verjonging 
-#### Figuur 1: samenstelling
+#| label: fig-bosverjonging-{{label}}
+#| fig-cap: "Aantal jonge bomen en struiken per soort en periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-height: 6
+#| warning: false
 
 regeneration_by_plot_height_species_s <- regeneration_by_plot_height_species[regeneration_by_plot_height_species$plot_id %in% plotinfo_s$plot_id,]
 
 regeneration_by_plot_height_species_s_stat <- regeneration_by_plot_height_species_s %>%
   group_by(period, color) %>%
-  summarise(name_sc= first(name_reclass), StemNumber= sum(mean_number_of_regeneration_ha)) %>%
+  summarise(name_reclassFULLNL= first(name_reclassFULLNL), StemNumber= sum(mean_number_of_regeneration_ha)) %>%
   left_join(Nplots, by="period")
 
 regeneration_by_plot_height_species_s_stat$StemNumber <- regeneration_by_plot_height_species_s_stat$StemNumber /regeneration_by_plot_height_species_s_stat$N
@@ -595,82 +750,85 @@ regeneration_by_plot_height_species_s_8sp <- regeneration_by_plot_height_species
   dplyr::filter(period==max(as.character(regeneration_by_plot_height_species_s_stat$period))) %>%
   top_n(8, StemNumber)
 
-regeneration_by_plot_height_species_s_stat_8sp <-  regeneration_by_plot_height_species_s_stat[regeneration_by_plot_height_species_s_stat$name_sc %in% regeneration_by_plot_height_species_s_8sp$name_sc,]
+regeneration_by_plot_height_species_s_stat_8sp <-  regeneration_by_plot_height_species_s_stat[regeneration_by_plot_height_species_s_stat$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL,]
 
-regeneration_by_plot_height_species_s_stat <-  regeneration_by_plot_height_species_s_stat[!(regeneration_by_plot_height_species_s_stat$name_sc %in% regeneration_by_plot_height_species_s_8sp$name_sc),] %>%
+regeneration_by_plot_height_species_s_stat <-  regeneration_by_plot_height_species_s_stat[!(regeneration_by_plot_height_species_s_stat$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period) %>%
-  summarise(name_sc=" Other species", color= "#282A72", StemNumber=sum(StemNumber), N= first(N)) %>%
+  summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72", StemNumber=sum(StemNumber), N= first(N)) %>%
   rbind(regeneration_by_plot_height_species_s_stat_8sp) %>%
-  group_by(period, name_sc) %>%
+  group_by(period, name_reclassFULLNL) %>%
   summarise(color=first(color), StemNumber=sum(StemNumber)) 
 
-regeneration_by_plot_height_species_s_stat$title <- "Number of regenerating trees and shrubs (#/ha)"
-
-mycolor <- unique(regeneration_by_plot_height_species_s_stat$color[ order(regeneration_by_plot_height_species_s_stat$name_sc)])
+mycolor <- unique(regeneration_by_plot_height_species_s_stat$color[ order(regeneration_by_plot_height_species_s_stat$name_reclassFULLNL)])
 
 ratio <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
      1000, 1)
 axisname <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
-     "Stem number 1.000 * (#/ha)", "Stem number (#/ha)") 
+     legend$SN1000, legend$SN) 
 
 ggplotly(
   ggplot(regeneration_by_plot_height_species_s_stat, aes(x= period)) + 
-    geom_bar(aes(fill = name_sc, weight= StemNumber/ratio)) + 
-    geom_point(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(x= period, y= mean/ratio), color = "black") +
+    geom_bar(aes(fill = name_reclassFULLNL, weight= StemNumber/ratio, text = paste0(name_reclassFULLNL, ": ", round(StemNumber,1), " #/ha"))) + 
+    geom_point(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(x= period, y= mean/ratio, text = paste0("Totaal: ", round(mean,1), " [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
     geom_errorbar(regeneration_by_plot_height_species_s_stat_summary, mapping =aes(ymin = lci/ratio, ymax=  uci/ratio), width=0.05, color = "black") +
-    scale_y_continuous(name=axisname) + scale_x_discrete(name="Period") + 
+    scale_y_continuous(name=axisname) + scale_x_discrete(name=legend$Per) + 
     scale_fill_manual(values =  mycolor) +
-    guides(fill=guide_legend(title="Tree species")) +
-    facet_wrap(~title)   )
+    guides(fill=guide_legend(title=legend$TS)), tooltip = "text")
+
+
+
 ```
 
-*Figure 10: Absolute numbers of regenerating trees per period and tree species.*
-
 ```{r}
+#| label: fig-bosverjongingrel-{{label}}
+#| fig-cap: "Aandeel van de verschillende soorten in de verjonging van bomen en struiken per periode. Het cijfer boven de grafiek geeft het totaal aantal."
+#| fig-height: 6
+#| warning: false
 
 ggplotly(
   ggplot(regeneration_by_plot_height_species_s_stat, aes(x= period, y=StemNumber)) + 
-    geom_col(position = 'fill', aes(fill = name_sc)) + 
-    scale_y_continuous(name="", labels = scales::percent_format()) + 
+    geom_col(position = 'fill', aes(fill = name_reclassFULLNL, text = paste0(name_reclassFULLNL, ": ", round(StemNumber/regeneration_by_plot_height_species_s_stat_summary$mean*100, 1), "%"))) + 
+    scale_y_continuous(name="Aantal (%)", labels = scales::percent_format()) + 
+    scale_x_discrete(name=legend$Per) +
     scale_fill_manual(values =  mycolor) +
-    guides(fill=guide_legend(title="Tree species")) +
-    facet_wrap(~title) +
-    geom_text(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(label = round(mean,0), x = period, y = 1.05))  )
+    guides(fill=guide_legend(title=legend$TS)) +
+    geom_text(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(label = round(mean,0), x = period, y = 1.05)), tooltip = "text"  )
 ```
 
-*Figure 11: Relative numbers of regenerating trees per period and tree species.*
-
 ```{r}
-#### Figuur 2: Hoogte
+#| label: fig-bosverjonginghoogte-{{label}}
+#| fig-cap: "Hoogteverdeling van de vestigende bomen per soort en periode."
+#| fig-height: 6
+#| warning: false
 
-regeneration_by_plot_height_species_s_8sp <-  regeneration_by_plot_height_species_s[regeneration_by_plot_height_species_s$name_reclass %in% regeneration_by_plot_height_species_s_8sp$name_sc,] %>%
-  select(period, plot_id, height_class, name_sc= name_reclass, color, StemNumber= mean_number_of_regeneration_ha)
+regeneration_by_plot_height_species_s_8sp <-  regeneration_by_plot_height_species_s[regeneration_by_plot_height_species_s$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL,] %>%
+  select(period, plot_id, height_class, name_reclassFULLNL= name_reclassFULLNL, color, StemNumber= mean_number_of_regeneration_ha)
 
 
-regeneration_by_plot_height_species_s_fig2 <-  regeneration_by_plot_height_species_s[!(regeneration_by_plot_height_species_s$name_reclass %in% regeneration_by_plot_height_species_s_8sp$name_sc),] %>%
+regeneration_by_plot_height_species_s_fig2 <-  regeneration_by_plot_height_species_s[!(regeneration_by_plot_height_species_s$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period, plot_id, height_class) %>%
-  summarise(name_sc=" Other species", color= "#282A72", StemNumber=sum(mean_number_of_regeneration_ha)) %>%
+  summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72", StemNumber=sum(mean_number_of_regeneration_ha)) %>%
   rbind(regeneration_by_plot_height_species_s_8sp) %>%
-  group_by(period, name_sc, color, height_class) %>%
+  group_by(period, name_reclassFULLNL, color, height_class) %>%
   summarise(StemNumber=sum(StemNumber)) %>%
   left_join(Nplots, by="period")
 
 regeneration_by_plot_height_species_s_fig2$StemNumber <- regeneration_by_plot_height_species_s_fig2$StemNumber /regeneration_by_plot_height_species_s_fig2$N
 
-mycolor <- unique(regeneration_by_plot_height_species_s_fig2$color[ order(regeneration_by_plot_height_species_s_fig2$name_sc)])
+mycolor <- unique(regeneration_by_plot_height_species_s_fig2$color[ order(regeneration_by_plot_height_species_s_fig2$name_reclassFULLNL)])
 
 ratio <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
      1000, 1)
 axisname <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
-     "Stem number 1.000 * (#/ha)", "Stem number (#/ha)")  
+     legend$SN1000, legend$SN)  
 
 ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)) +
-           geom_bar(aes(fill = name_sc, weight = StemNumber/ratio)) + 
-           scale_y_continuous(name= axisname) + scale_x_discrete(name="Height class (cm)") +
+           geom_bar(aes(fill = name_reclassFULLNL, weight = StemNumber/ratio, text = paste0(name_reclassFULLNL, ": ", round(StemNumber,1), " #/ha" ))) + 
+           scale_y_continuous(name= axisname) + scale_x_discrete(name=legend$HC) +
            scale_fill_manual(values =  mycolor) +
-           guides(fill=guide_legend(title="Tree species")) +
+           guides(fill=guide_legend(title=legend$TS)) +
            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-           facet_wrap(~period) )
+           facet_wrap(~period), tooltip = "text" )
 
 
 
@@ -681,5 +839,6 @@ ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)
 #### Figuur 2: verschuiving IndVal
 
 ```
+:::
 
-*Figure 12: Height distribution of the regenerating tree species per period and tree species.*
+> [**Biomassa**](#biomassa) [**Levende bomen**](#levende-bomen) [**Dood hout**](#dood-hout) [**Verjonging**](#verjonging)
