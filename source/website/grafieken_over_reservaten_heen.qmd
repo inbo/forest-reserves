@@ -88,11 +88,19 @@ bscols(widths = c(6, 6),
                )
         ),
        sd %>%
-        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
         layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Ondergrondse koolstofvoorraad (ton C/ha)"),
-               yaxis = list(title = "Bosreservaten")))
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        )
+)
 ```
 
 ## Houtvolume
@@ -121,7 +129,8 @@ stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %
            names_to = "label", values_to = "value") %>%
   group_by(Short_name, period, label) %>%
   summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
-  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
+  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
+  mutate(offset_period = (period - 2.5) * 0.2)
 
 stat_dendro_wide$Short_name <- fct_reorder(stat_dendro_wide$Short_name, stat_dendro_wide$mean_vol_alive_m3_ha)
 ```
@@ -136,30 +145,60 @@ bscols(widths = c(4, 4),
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
         layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume levende bomen (m³/ha)"),
-               yaxis = list(title = "Bosreservaten")),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
        sd %>%
-        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
         layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume dood hout (m³/ha)"),
-               yaxis = list(title = "Bosreservaten")))
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        )
+)
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_dead_standing_m3_ha)) %>%
         layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume staand dood hout (m³/ha)"),
-               yaxis = list(title = "Bosreservaten")),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
        sd %>%
-        plot_ly(x = ~mean_vol_log_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_log_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_log_m3_ha)) %>%
         layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume liggend dood hout (m³/ha)"),
-               yaxis = list(title = "Bosreservaten")))
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        )
+)
 ```
 :::
