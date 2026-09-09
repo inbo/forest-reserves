@@ -1,5 +1,8 @@
 ---
 toc: false
+execute:
+  cache: true
+  freeze: auto
 ---
 
 # Lijst met reservaten
@@ -12,6 +15,71 @@ Uit deze ruimere set zijn momenteel een twintigtal gebieden geselecteerd waar de
 Deze bosreservaten zijn gekozen op basis van het bostype waarvoor ze representatief zijn, hun oppervlakte en de mate van ontwikkeling.
 Een overzichtskaart en lijst vind je hieronder.
 
-In de tabel kan je doorklikken naar achtergrondinfo bij elkde specifieke reservaten
+```{r}
+#| label: setup-{{label}}
+#| include: FALSE
 
-TABEL BOSRESERVATEN TOEVOEGEN!!!
+library(tidyr)
+library(dplyr)
+library(kableExtra)
+library(tidyverse)
+library(knitr)
+library(DT)
+```
+
+```{r}
+#| label: kaart Vlaanderen
+#| fig-align: center
+#| fig-cap: "Overzicht van gemonitorde bosreservaten in Vlaanderen. De grijze achtergrond geeft de bossen weer."
+knitr::include_graphics(here::here('Bosreservatenkaart3.jpg'))
+```
+
+In de tabel kan je doorklikken naar achtergrondinfo voor elk van de specifieke reservaten
+
+```{r}
+
+#metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+#metadata$Beheer <- ifelse(metadata$Beheer == "","","*")
+
+#tabel_plotinfo <- metadata %>%
+#  mutate(
+#    Bos = cell_spec(   # hier hernoem ik forest_reserve meteen naar bos terwijl ik de #link eraan hang
+#      Correct_name, "html", link = paste0(
+#        "fiches_reservaat_qmd/",
+#        gsub("\\s", "_", tolower(metadata$forest_reserve)),  #hier moet je #forest_reserve behouden
+#        ".qmd"
+#      )
+#    )
+#  ) %>%
+#  select("Nr", "Bos", "Beheer", "Provincie", "Gemeente") %>%  # hier alle kolommen uit #tabel plotinfo selecteren die je nodig hebt
+#  kable("html", row_names = NULL, escape = FALSE) %>%     # escape toevoegen t.o.v. uw #versie
+#  kable_styling(full_width = F, bootstrap_options = c("hover", "condensed"))  # #bootstrap_options toevoegen t.o.v. uw versie
+
+#tabel_plotinfo
+
+```
+
+```{r}
+
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+metadata$Beheer <- ifelse(metadata$Beheer == "","","*")
+
+tabel_plotinfo <- metadata %>%
+  mutate(
+    Bos = cell_spec(   # hier hernoem ik forest_reserve meteen naar bos terwijl ik de link eraan hang
+      Correct_name, "html", link = paste0(
+        "fiches_reservaat_qmd/",
+        gsub("\\s", "_", tolower(metadata$forest_reserve)),  #hier moet je forest_reserve behouden
+        ".html"
+      )
+    )
+  ) %>%
+  select("Nr", "Bos", "Beheer", "Provincie", "Gemeente") %>%  # hier alle kolommen uit tabel plotinfo selecteren die je nodig hebt
+  datatable(rownames = FALSE, options = list(sDom  = '<"top">lrt<"bottom">ip', pageLength = -1, lengthChange = FALSE), escape = FALSE)     # escape toevoegen t.o.v. uw versie
+#  kable_styling(full_width = F, bootstrap_options = c("hover", "condensed"))  # bootstrap_options toevoegen t.o.v. uw versie
+
+tabel_plotinfo
+
+```
+
+\*: Deze bossen bestaan deels of volledig uit beheerde delen.
