@@ -1,5 +1,5 @@
 ---
-title: Meetnet Spontane Dynamiek Bosreservaten
+title: Vergelijking tussen de reservaten
 toc: false
 ---
 
@@ -12,86 +12,104 @@ library(plotly)
 library(crosstalk)
 ```
 
-## Resultaten
-
 ::: panel-tabset
-## Biomassa
+## Koolstofvoorraad
 
 ```{r}
-setwd("C:/Users/els_lommelen/Documents/gitrepos/forest-reserves/data")
+setwd("C:/Users/arno_thomaes/Documents/forest-reserves/data")
 stat_carbon <- read.csv2('carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
 stat_dendro <- read.csv2('dendro_by_plot.csv', header = TRUE, dec=',', sep=';')
 plotinfo <- read.csv2('plotinfo.csv', header = TRUE, dec=',', sep=';')
+metadata <- read.csv2('metadata.csv', header = TRUE, dec=',', sep=';')
 
-plotinfo$forest_reserve <- as.factor(plotinfo$forest_reserve)
+plotinfo$forest_reserve <- ifelse(plotinfo$forest_reserve == "Kersselaerspleyn", "Zwaenepoel", plotinfo$forest_reserve)
+plotinfo <- left_join(plotinfo, metadata, by = "forest_reserve")
+#plotinfo$Short_name <- as.factor(plotinfo$Short_name)
 
 stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
-   select(forest_reserve, period, BiomassAboveGr_t_ha, BiomassBelowGr_t_ha,
+   select(Short_name, period, BiomassAboveGr_t_ha, BiomassBelowGr_t_ha,
            BiomassTotalLiving_t_ha, CarbonAboveGr_t_ha, CarbonBelowGr_t_ha,
            CarbonTotalLiving_t_ha ) %>%
   pivot_longer(cols = c("BiomassAboveGr_t_ha", "BiomassBelowGr_t_ha",
            "BiomassTotalLiving_t_ha", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha",
            "CarbonTotalLiving_t_ha"),
            names_to = "label", values_to = "value") %>%
-  group_by(forest_reserve, period, label) %>%
+  group_by(Short_name, period, label) %>%
   summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
   pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
 
- stat_carbon_wide$forest_reserve <- fct_reorder(stat_carbon_wide$forest_reserve, stat_carbon_wide$mean_BiomassAboveGr_t_ha)
+ stat_carbon_wide$Short_name <- fct_reorder(stat_carbon_wide$Short_name, stat_carbon_wide$mean_BiomassAboveGr_t_ha)
 
 ```
+
+Bosreservaten worden met een tussentijd van 10 jaar opgemeten om de evolutie in de tijd vast te stellen.
+De metingen uit de verschillende periodes worden hier aangegeven als periode 1 (2000-2009), 2 (2010-2019) en 3 (2020-2029).
+De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in het netwerk opgenomen en hebben dan enkel metingen in de latere periodes.
+In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
+
+In dit tabblad worden de resultaten voor de bovengrondse koolstofvoorraad (levende en dode bomen) weergegeven, op basis van de volumeresultaten van de cirkelplots.
+De ondergrondse koolstof omvat de wortels van deze bomen.
+Die zijn vervolgens omgerekend naar koolstofvoorraad door rekening te houden met het koolstofgehalte en specifieke houtdensiteiten per boomsoort.
+Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven de standaard afwijking.
+
+*Opmerkingen* In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
+
+Het bosreservaat Zwaenepoel is sinds de oprichting sterk uitgebreid, en ook het netwerk aan cirkelplots is sterk gewijzigd.
+De resultaten zijn hier dus niet éénduidig te vergelijken over de periodes.
+
+De reservaten met een \* bevatten ook beheerde delen.
 
 ```{r}
 sd <- SharedData$new(stat_carbon_wide)
 
 bscols(widths = c(4, 4),
-       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
-       filter_checkbox("period", "Select period", sd, ~period))
+       filter_select("Short_name", "Selecteer bosreservaten", sd, ~Short_name),
+       filter_checkbox("period", "Selecteer periode", sd, ~period))
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_BiomassAboveGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Above ground biomass (ton /ha)"),
-               yaxis = list(title = "Forest reserve")),
-       sd %>%
-        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_BiomassBelowGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Below ground biomass (ton /ha)"),
-               yaxis = list(title = "Forest reserve")))
-
-bscols(widths = c(6, 6),
-       sd %>%
-        plot_ly(x = ~mean_CarbonAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_CarbonAboveGr_t_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_CarbonAboveGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Above ground carbon (ton /ha)"),
-               yaxis = list(title = "Forest reserve")),
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Bovengrondse koolstofvoorraad (ton C/ha)"),
+               yaxis = list(title = "Bosreservaten")),
        sd %>%
-        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Below ground carbon (ton /ha)"),
-               yaxis = list(title = "Forest reserve")))
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Ondergrondse koolstofvoorraad (ton C/ha)"),
+               yaxis = list(title = "Bosreservaten")))
 ```
 
-## Dendrometerie
+## Houtvolume
+
+Bosreservaten worden met een tussentijd van 10 jaar opgemeten om de evolutie in de tijd vast te stellen.
+De metingen uit de verschillende periodes worden hier aangegeven als periode 1 (2000-2009), 2 (2010-2019) en 3 (2020-2029).
+De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in het netwerk opgenomen en hebben dan enkel metingen in de latere periodes.
+
+In dit tabblad worden de resultaten voor de bovengrondse volumes (levend en dood) weergegeven, op basis van de resultaten van de cirkelplots.
+Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven de standaard afwijking.
+
+*Opmerkingen* In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
+
+Het bosreservaat Zwaenepoel is sinds de oprichting sterk uitgebreid, en ook het netwerk aan cirkelplots is sterk gewijzigd.
+De resultaten zijn hier dus niet éénduidig te vergelijken over de periodes.
+
+De reservaten met een \* bevatten ook beheerde delen.
 
 ```{r}
 
 stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
 
 stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %>%
-  select(forest_reserve, period, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
+  select(Short_name, period, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
   pivot_longer(cols = c("vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha"),
            names_to = "label", values_to = "value") %>%
-  group_by(forest_reserve, period, label) %>%
+  group_by(Short_name, period, label) %>%
   summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
   pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
 
-stat_dendro_wide$forest_reserve <- fct_reorder(stat_dendro_wide$forest_reserve, stat_dendro_wide$mean_vol_alive_m3_ha)
+stat_dendro_wide$Short_name <- fct_reorder(stat_dendro_wide$Short_name, stat_dendro_wide$mean_vol_alive_m3_ha)
 ```
 
 ```{r}
@@ -99,35 +117,35 @@ stat_dendro_wide$forest_reserve <- fct_reorder(stat_dendro_wide$forest_reserve, 
 sd <- SharedData$new(stat_dendro_wide)
 
 bscols(widths = c(4, 4),
-       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
-       filter_checkbox("period", "Select period", sd, ~period))
+       filter_select("Short_name", "Selecteer bosreservaten", sd, ~Short_name),
+       filter_checkbox("period", "Selecteer periode", sd, ~period))
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume living trees (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")),
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume levende bomen (m³/ha)"),
+               yaxis = list(title = "Bosreservaten")),
        sd %>%
-        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")))
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume dood hout (m³/ha)"),
+               yaxis = list(title = "Bosreservaten")))
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_dead_standing_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume standing dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")),
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume staand dood hout (m³/ha)"),
+               yaxis = list(title = "Bosreservaten")),
        sd %>%
-        plot_ly(x = ~mean_vol_log_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_log_m3_ha, y = ~Short_name, type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_log_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume lying dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")))
+        layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume liggend dood hout (m³/ha)"),
+               yaxis = list(title = "Bosreservaten")))
 ```
 :::
