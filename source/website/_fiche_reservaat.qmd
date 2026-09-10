@@ -189,7 +189,7 @@ Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
 `r first(metadata_s$remark)`
 
 ::: panel-tabset
-## Biomassa {#biomassa}
+## Biomassa
 
 @fig-volume-{{label}} en @fig-volumerel-{{label}} geven het totaal volume per periode voor de levende, staande dode en liggende dode bomen, @fig-volume-{{label}} in absolute waarden en @fig-volumerel-{{label}} in relatieve waarden.
 @fig-carbon-{{label}} geeft de boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode.
@@ -306,7 +306,7 @@ ggplotly(
 
 ```
 
-## Levende bomen {#levende-bomen}
+## Levende bomen
 
 Onderstaande figuren tonen de soortensamenstelling van de levende bomen.
 Stamtal, grondvlak en volume worden getoond per periode.
@@ -501,7 +501,7 @@ ggplotly(ggplot(dendro_by_diam_plot_species_s_fig2, aes(x= dbh_class_5cm)) +
   facet_wrap(~period, nrow= periodnr),   tooltip = "text")
 ```
 
-## Dood hout {#dood-hout}
+## Dood hout
 
 De volgende figuren geven het volume aan dood hout, apart voor staand en liggend dood hout.
 @fig-doodhouttreesp-{{label}} toont de absolute volumes voor elke soort terwijl @fig-doodhoutrel-{{label}} de relatieve aandelen van de verschillende soorten in het totaal volume weergeeft.
@@ -698,7 +698,7 @@ ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= period, y = Volum
            facet_wrap(~title),   tooltip = "text")
 ```
 
-## Verjonging {#verjonging}
+## Verjonging
 
 Onder verjonging verstaan we alle jonge bomen en struiken met een diameter op borsthoogte van minder dan 5 cm.
 Ze wordt hier voorgesteld in 3 klassen: \<30, 30-50, 50-200 en \>200 cm.
@@ -832,4 +832,3 @@ ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)
 ```
 :::
 
-> [**Biomassa**](#biomassa) [**Levende bomen**](#levende-bomen) [**Dood hout**](#dood-hout) [**Verjonging**](#verjonging)
