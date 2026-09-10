@@ -188,8 +188,6 @@ kable(Nplots_S, "html") %>%
 Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
 `r first(metadata_s$remark)`
 
-####  {#sec-boven-tabs}
-
 ::: panel-tabset
 ## Biomassa
 
@@ -834,4 +832,4 @@ ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)
 ```
 :::
 
-[Naar tabs](#sec-boven-tabs)
+[Naar tabs](#tabset-1-1-tab)
