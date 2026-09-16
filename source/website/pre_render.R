@@ -4,12 +4,11 @@ library(quarto)
 library(purrr)
 library(dplyr)
 library(stringr)
+library(forrescalc)
 
-plotinfo <- read.csv2('../../data/plotinfo.csv', header = TRUE, dec = ',', sep = ';')
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';')
+plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
 
-# Kerselaerspleyn samenvoegen bij Zoniën en volgorde aanpassen zoals in metadata
-plotinfo$forest_reserve <- ifelse(plotinfo$forest_reserve == "Kersselaerspleyn", "Zwaenepoel", plotinfo$forest_reserve)
 plotinfo2 <- left_join(plotinfo, metadata, by = "forest_reserve")
 plotinfo2 <- arrange(plotinfo2, Nr)
 
