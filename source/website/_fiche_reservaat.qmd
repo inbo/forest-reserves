@@ -22,36 +22,37 @@ library(INBOtheme)
 theme_set(theme_inbo(base_size = 12, transparent = FALSE))
 library(plotly)
 library(stringr)
+library(forrescalc)
+library(frictionless)
 
 ```
 
 ```{r}
-setwd("C:/Users/arno_thomaes/Documents/forest-reserves/source/website")
 #data inlezen en definieren
-carbon_by_plot <- read.csv2('../../data/carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
-dendro_by_diam_plot_species <- read.csv2('../../data/dendro_by_diam_plot_species.csv', header = TRUE, dec=',', sep=';')
-dendro_by_plot <- read.csv2('../../data/dendro_by_plot.csv', header = TRUE, dec=',', sep=';')
-logs_by_decay_plot <- read.csv2('../../data/logs_by_decay_plot.csv', header = TRUE, dec=',', sep=';')
-logs_by_decay_plot_species <- read.csv2('../../data/logs_by_decay_plot_species.csv', header = TRUE, dec=',', sep=';')
-regeneration_by_plot_height_species <- read.csv2('../../data/regeneration_by_plot_height_species.csv', header = TRUE, dec=',', sep=';')
-plotinfo <- read.csv2('../../data/plotinfo.csv', header = TRUE, dec=',', sep=';')
-all_names3 <- read.csv2('../../data/all_names3.csv', header = TRUE, dec=',', sep=';')
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+carbon_by_plot <- read_forresdat_table("carbon_by_plot", plottype = "CP")
+dendro_by_diam_plot_species <- read_forresdat_table("dendro_by_diam_plot_species", plottype = "CP")
+dendro_by_plot <- read_forresdat_table("dendro_by_plot", plottype = "CP")
+deadw_by_decay_plot <- read_forresdat_table("deadw_by_decay_plot", plottype = "CP")
+deadw_by_decay_plot_species <- read_forresdat_table("deadw_by_decay_plot_species", plottype = "CP")
+reg_by_plot_height_species <- read_forresdat_table("reg_by_plot_height_species", plottype = "CP")
+plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
 
-dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names3, by= "name_sc")
 
-logs_by_decay_plot_species <- left_join(logs_by_decay_plot_species, all_names3, by= "name_sc")
-regeneration_by_plot_height_species <- left_join(regeneration_by_plot_height_species, all_names3, by= "name_sc")
+all_names3 <- read.csv2('../../data/all_names4.csv', header = TRUE, dec=',', sep=';')
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
+
+# link tussen species code en species name
+dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names3, by= "species")
+deadw_by_decay_plot_species <- left_join(deadw_by_decay_plot_species, all_names3, by= "species")
+reg_by_plot_height_species <- left_join(reg_by_plot_height_species, all_names3, by= "species")
 
 dendro_by_diam_plot_species$period <- as.factor(dendro_by_diam_plot_species$period)
-logs_by_decay_plot$period <- as.factor(logs_by_decay_plot$period)
-logs_by_decay_plot_species$period <- as.factor(logs_by_decay_plot_species$period)
+deadw_by_decay_plot$period <- as.factor(deadw_by_decay_plot$period)
+deadw_by_decay_plot_species$period <- as.factor(deadw_by_decay_plot_species$period)
 plotinfo$period <- as.factor(plotinfo$period)
-regeneration_by_plot_height_species$period <- as.factor(regeneration_by_plot_height_species$period)
+reg_by_plot_height_species$period <- as.factor(reg_by_plot_height_species$period)
 dendro_by_plot$period <- as.factor(dendro_by_plot$period)
 carbon_by_plot$period <- as.factor(carbon_by_plot$period)
-
-plotinfo$forest_reserve <- ifelse(plotinfo$forest_reserve == "Kersselaerspleyn", "Zwaenepoel", plotinfo$forest_reserve)
 
 dendro_by_diam_plot_species$dbh_class_5cm <- str_remove(dendro_by_diam_plot_species$dbh_class_5cm, " cm") %>%
     str_replace(" - ", "-")
@@ -61,16 +62,20 @@ dendro_by_diam_plot_species$dbh_class_5cm <- factor(dendro_by_diam_plot_species$
 "90-95", "95-100", "100-105","105-110", "110-115", "115-120", "120-125", "125-130", "130-135", "135-140", "140-145", "145-150", "150-155", "155-160"))
 # Problem: dit kan wellicht eleganter onafhankelijk van welke levels precent zijn
 
-regeneration_by_plot_height_species$height_class <- str_remove(regeneration_by_plot_height_species$height_class, " cm") %>%
-  str_replace(" - ", "-")
-#unique(regeneration_by_plot_height_species$height_class)
-regeneration_by_plot_height_species$height_class <- ifelse(is.na(regeneration_by_plot_height_species$height_class),"U", regeneration_by_plot_height_species$height_class)
+reg_by_plot_height_species$height_class <- ifelse(reg_by_plot_height_species$height_class<2010, "0-50",
+    ifelse(reg_by_plot_height_species$height_class==3000, "50-200", 
+    ifelse(reg_by_plot_height_species$height_class==4000, "> 200",
+    ifelse(reg_by_plot_height_species$height_class==4000, "> 200",
+    ifelse(reg_by_plot_height_species$height_class==5000, "0-50",
+    ifelse(reg_by_plot_height_species$height_class==6000, "50-200",      
+    ifelse(reg_by_plot_height_species$height_class==7000, "> 200",  "50-200")))))))
+      
+#unique(reg_by_plot_height_species$height_class)
+reg_by_plot_height_species$height_class <- ifelse(is.na(reg_by_plot_height_species$height_class),"U", reg_by_plot_height_species$height_class)
 
-regeneration_by_plot_height_species$height_class <- ifelse(regeneration_by_plot_height_species$height_class %in% c("0-30", "30-50"), "0-50",regeneration_by_plot_height_species$height_class)
+reg_by_plot_height_species$height_class <- as.factor(reg_by_plot_height_species$height_class)
 
-regeneration_by_plot_height_species$height_class <- factor(regeneration_by_plot_height_species$height_class, levels = c("0-50", "50-130", "50-200", "> 130", "> 200", "U"))
-
-regeneration_by_plot_height_species <- regeneration_by_plot_height_species[regeneration_by_plot_height_species$mean_number_of_regeneration_ha>0,]
+reg_by_plot_height_species <- reg_by_plot_height_species[reg_by_plot_height_species$mean_number_of_regeneration_ha>0,]
 
 ```
 
@@ -131,10 +136,7 @@ plotinfo_s <- plotinfo[plotinfo$forest_reserve == "{{selected_reserve}}",]
 metadata_s <- metadata[metadata$forest_reserve == "{{selected_reserve}}",]
 
 #Kluisbos
-Kluisbosbeheer <- c(1574, 1575, 1576, 1577, 1578, 1579, 1580, 1581, 1582, 1583, 
-1584, 1585, 1586, 1587, 1588, 1589, 1590, 1591, 1592, 1593, 1594, 1607, 1608, 1609,
-1610, 1611, 1612, 1613, 1614, 1615, 1616, 1617, 1618, 1619, 1620, 1621, 1622, 1623,
-1624, 1625, 1626, 1627, 1628)
+Kluisbosbeheer <- c(seq(1575, 1628, 1))
 plotinfo_s <- plotinfo_s[!plotinfo_s$plot_id %in% Kluisbosbeheer,]
 
 name <- metadata_s$Correct_name
@@ -162,6 +164,7 @@ De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` �
 #| fig-subcap: true
 #| warning: false
 
+# TODO Els: moet deze locatieverwijzing ook aangepast worden? 
 foto <- paste0(name,".jpg")
 kaart <- paste0(name,"k.jpg")
 
@@ -183,7 +186,6 @@ kable(Nplots_S, "html") %>%
 ```
 
 Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
-`r first(metadata_s$remark)`
 
 ::: panel-tabset
 ## Biomassa
@@ -202,10 +204,10 @@ Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
 
 # selecteer punten van bosreservaat
 dendro_by_plot_s_stat <- dendro_by_plot[dendro_by_plot$plot_id %in% plotinfo_s$plot_id,] %>%
-  select("period", "vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha")  %>%
+  select("period", "vol_alive_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha")  %>%
   left_join(Nplots, by="period")
 
-dendro_by_plot_s_stat$vol_tot <- dendro_by_plot_s_stat$vol_alive_m3_ha + dendro_by_plot_s_stat$vol_deadw_m3_ha
+dendro_by_plot_s_stat$vol_tot <- dendro_by_plot_s_stat$vol_alive_m3_ha + dendro_by_plot_s_stat$vol_dead_standing_m3_ha + dendro_by_plot_s_stat$vol_log_m3_ha
 
 dendro_by_plot_s_stat2 <- dendro_by_plot_s_stat %>%
   select("period", "N", "vol_alive_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha") %>%
@@ -263,24 +265,29 @@ ggplotly(
 #| warning: false
 
 carbon_by_plot_s_stat <- carbon_by_plot[carbon_by_plot$plot_id %in% plotinfo_s$plot_id,] %>%
-  select("period", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha")  %>%
+  select("period", "carbon_standing_agb_t_ha_alive", "carbon_standing_bgb_t_ha_alive",   "carbon_agb_t_ha_dead", "carbon_standing_bgb_t_ha_dead")  %>%
   left_join(Nplots, by="period")
 
 #Voor summary neem plots samen en bereken mean
 carbon_by_plot_s_summ <- carbon_by_plot_s_stat %>%
   group_by(period) %>%
-  summarise(CarbonAboveGr_t_ha= sum(CarbonAboveGr_t_ha), 
-            CarbonBelowGr_t_ha= sum(CarbonBelowGr_t_ha), N= first(N)) 
+  summarise(carbon_standing_agb_t_ha_alive= sum(carbon_standing_agb_t_ha_alive), 
+            carbon_standing_bgb_t_ha_alive= sum(carbon_standing_bgb_t_ha_alive), 
+            carbon_agb_t_ha_dead = sum(carbon_agb_t_ha_dead),
+            carbon_standing_bgb_t_ha_dead = sum(carbon_standing_bgb_t_ha_dead),
+            N= first(N)) 
 
-carbon_by_plot_s_summ$Bovengronds <- carbon_by_plot_s_summ$CarbonAboveGr_t_ha /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$Ondergronds <- carbon_by_plot_s_summ$CarbonBelowGr_t_ha /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$Bovengronds <- carbon_by_plot_s_summ$carbon_standing_agb_t_ha_alive /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$Ondergronds <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_alive /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$Dood <- carbon_by_plot_s_summ$carbon_agb_t_ha_dead /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Dood ondergronds" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_dead /carbon_by_plot_s_summ$N
 
 carbon_by_plot_s_summ <- carbon_by_plot_s_summ %>%
-    pivot_longer(cols = c("Bovengronds", "Ondergronds"),
+    pivot_longer(cols = c("Bovengronds", "Ondergronds", "Dood", "Dood ondergronds"),
            names_to = "label", values_to = "value")
 
-carbon_by_plot_s_stat$C_tot <- carbon_by_plot_s_stat$CarbonAboveGr_t_ha +
-  carbon_by_plot_s_stat$CarbonBelowGr_t_ha
+carbon_by_plot_s_stat$C_tot <- carbon_by_plot_s_stat$carbon_standing_agb_t_ha_alive +
+  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_alive + carbon_by_plot_s_stat$Dood +   carbon_by_plot_s_stat$Dood_bgb
 
 carbon_by_plot_s_summ_summ <- carbon_by_plot_s_stat %>%
   group_by(period) %>%
@@ -518,7 +525,8 @@ dendro_by_diam_plot_species_s_statdead <- dendro_by_diam_plot_species_s %>%
   summarise(Volume_standing= sum(vol_dead_standing_m3_ha)) %>%
   left_join(Nplots, by="period")
 
-# summary (strikt genomen klopt sd niet want berekend op aantal plots met waarnemingen)
+# summary (strikt genomen klopt sd niet want enkel berekent op aantal plots met waarnemingen, plots zonder waarnemingen worden niet meegenomen dus moet in de toekomst nog aangepast worden)
+
 dendro_by_diam_plot_species_s_statdead <- dendro_by_diam_plot_species_s_statdead %>%
   group_by(period) %>%
   summarise(sum= sum(Volume_standing), ci= 1.96*sd(Volume_standing), N= first(N)) 
@@ -529,25 +537,25 @@ dendro_by_diam_plot_species_s_statdead$uci <- dendro_by_diam_plot_species_s_stat
 
 #Lying dead wood
 # summary per plot
-logs_by_decay_plot_s <- logs_by_decay_plot[logs_by_decay_plot$plot_id %in% plotinfo_s$plot_id,]
-logs_by_decay_plot_s_statdead <- logs_by_decay_plot_s %>%
+deadw_by_decay_plot_s <- deadw_by_decay_plot[deadw_by_decay_plot$plot_id %in% plotinfo_s$plot_id,]
+deadw_by_decay_plot_s_statdead <- deadw_by_decay_plot_s %>%
   group_by(period, plot_id) %>%
   summarise(Volume_lying= sum(vol_log_m3_ha)) %>%
   left_join(Nplots, by="period")
 
 # summary (strikt genomen klopt sd niet want berekend op aantal plots met waarnemingen)
-logs_by_decay_plot_s_statdead <- logs_by_decay_plot_s_statdead %>%
+deadw_by_decay_plot_s_statdead <- deadw_by_decay_plot_s_statdead %>%
   group_by(period) %>%
   summarise(sum= sum(Volume_lying), ci= (1.96*sd(Volume_lying)), N= first(N))
 
-logs_by_decay_plot_s_statdead$mean <- logs_by_decay_plot_s_statdead$sum /logs_by_decay_plot_s_statdead$N
-logs_by_decay_plot_s_statdead$lci <- logs_by_decay_plot_s_statdead$mean - logs_by_decay_plot_s_statdead$ci/sqrt(logs_by_decay_plot_s_statdead$N)
-logs_by_decay_plot_s_statdead$uci <- logs_by_decay_plot_s_statdead$mean + logs_by_decay_plot_s_statdead$ci/sqrt(logs_by_decay_plot_s_statdead$N)
+deadw_by_decay_plot_s_statdead$mean <- deadw_by_decay_plot_s_statdead$sum /deadw_by_decay_plot_s_statdead$N
+deadw_by_decay_plot_s_statdead$lci <- deadw_by_decay_plot_s_statdead$mean - deadw_by_decay_plot_s_statdead$ci/sqrt(deadw_by_decay_plot_s_statdead$N)
+deadw_by_decay_plot_s_statdead$uci <- deadw_by_decay_plot_s_statdead$mean + deadw_by_decay_plot_s_statdead$ci/sqrt(deadw_by_decay_plot_s_statdead$N)
 
 # Combine summary 
-logs_by_decay_plot_s_statdead$label <- "Volume_lying"
+deadw_by_decay_plot_s_statdead$label <- "Volume_lying"
 dendro_by_diam_plot_species_s_statdead$label <- "Volume_standing"
-dead_wood_combined <- rbind(logs_by_decay_plot_s_statdead, dendro_by_diam_plot_species_s_statdead) 
+dead_wood_combined <- rbind(deadw_by_decay_plot_s_statdead, dendro_by_diam_plot_species_s_statdead) 
 
 #per tree species standing
 dendro_by_diam_plot_species_s_statdead2 <- dendro_by_diam_plot_species_s %>%
@@ -558,19 +566,19 @@ dendro_by_diam_plot_species_s_statdead2 <- dendro_by_diam_plot_species_s %>%
 dendro_by_diam_plot_species_s_statdead2$value <- dendro_by_diam_plot_species_s_statdead2$Volume_standing /dendro_by_diam_plot_species_s_statdead2$N
 
 #per tree species lying
-logs_by_decay_plot_species_s_statdead <- logs_by_decay_plot_species[logs_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
+deadw_by_decay_plot_species_s_statdead <- deadw_by_decay_plot_species[deadw_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
   group_by(period, name_reclassFULLNL) %>%
   summarise(color= first(color), Volume_lying= sum(vol_log_m3_ha)) %>%
   left_join(Nplots, by= "period")
 
-logs_by_decay_plot_species_s_statdead$value <- logs_by_decay_plot_species_s_statdead$Volume_lying /logs_by_decay_plot_species_s_statdead$N
+deadw_by_decay_plot_species_s_statdead$value <- deadw_by_decay_plot_species_s_statdead$Volume_lying /deadw_by_decay_plot_species_s_statdead$N
 
 
 #per tree species combined
-logs_by_decay_plot_species_s_statdead$label <- "Volume_lying"
+deadw_by_decay_plot_species_s_statdead$label <- "Volume_lying"
 dendro_by_diam_plot_species_s_statdead2$label <- "Volume_standing"
 
-dead_wood_species_combined <- rbind(logs_by_decay_plot_species_s_statdead, dendro_by_diam_plot_species_s_statdead2) 
+dead_wood_species_combined <- rbind(deadw_by_decay_plot_species_s_statdead, dendro_by_diam_plot_species_s_statdead2) 
 
 # reduceren naar 8 soorten, soorten met hoogste totaal volume van laatset periode
 dead_wood_species_8sp <- dead_wood_species_combined %>%
@@ -636,33 +644,33 @@ De volgende figuren focussen op de [verteringsklassen van het liggend dood hout]
 #| warning: false
 
 #### Figure 3: Decay stage
-logs_by_decay_plot_species_s_statdead2 <- logs_by_decay_plot_species[logs_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
-  group_by(period, decaystage_code, plot_id) %>%
+deadw_by_decay_plot_species_s_statdead2 <- deadw_by_decay_plot_species[deadw_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
+  group_by(period, decaystage, plot_id) %>%
   summarise(Volume= sum(vol_log_m3_ha)) %>%
   left_join(Nplots, by= "period")
 
-logs_by_decay_plot_species_s_statdead2 <- logs_by_decay_plot_species_s_statdead2 %>%
-  group_by(period, decaystage_code) %>%
+deadw_by_decay_plot_species_s_statdead2 <- deadw_by_decay_plot_species_s_statdead2 %>%
+  group_by(period, decaystage) %>%
   summarise(sum= sum(Volume),  ci= (1.96*sd(Volume)), N= first(N))
 
 
-logs_by_decay_plot_species_s_statdead2$Volume <- logs_by_decay_plot_species_s_statdead2$sum /logs_by_decay_plot_species_s_statdead2$N
-logs_by_decay_plot_species_s_statdead2$lci <- logs_by_decay_plot_species_s_statdead2$Volume - logs_by_decay_plot_species_s_statdead2$ci/sqrt(logs_by_decay_plot_species_s_statdead2$N)
-logs_by_decay_plot_species_s_statdead2$uci <- logs_by_decay_plot_species_s_statdead2$Volume + logs_by_decay_plot_species_s_statdead2$ci/sqrt(logs_by_decay_plot_species_s_statdead2$N)
+deadw_by_decay_plot_species_s_statdead2$Volume <- deadw_by_decay_plot_species_s_statdead2$sum /deadw_by_decay_plot_species_s_statdead2$N
+deadw_by_decay_plot_species_s_statdead2$lci <- deadw_by_decay_plot_species_s_statdead2$Volume - deadw_by_decay_plot_species_s_statdead2$ci/sqrt(deadw_by_decay_plot_species_s_statdead2$N)
+deadw_by_decay_plot_species_s_statdead2$uci <- deadw_by_decay_plot_species_s_statdead2$Volume + deadw_by_decay_plot_species_s_statdead2$ci/sqrt(deadw_by_decay_plot_species_s_statdead2$N)
 
-logs_by_decay_plot_species_s_statdead2$decaystage_code <- ifelse(is.na(logs_by_decay_plot_species_s_statdead2$decaystage_code),"U", logs_by_decay_plot_species_s_statdead2$decaystage_code)
+deadw_by_decay_plot_species_s_statdead2$decaystage <- ifelse(is.na(deadw_by_decay_plot_species_s_statdead2$decaystage),"U", deadw_by_decay_plot_species_s_statdead2$decaystage)
 
-logs_by_decay_plot_species_s_statdead2$decaystage_code <- factor(logs_by_decay_plot_species_s_statdead2$decaystage_code)
+deadw_by_decay_plot_species_s_statdead2$decaystage <- factor(deadw_by_decay_plot_species_s_statdead2$decaystage)
 
-levels(logs_by_decay_plot_species_s_statdead2$decaystage_code) <-
+levels(deadw_by_decay_plot_species_s_statdead2$decaystage) <-
  c("1+", "1", "2", "3", "4", "5", "U")
   
 ###### 
 
 
-ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= decaystage_code)) + 
+ggplotly(ggplot(deadw_by_decay_plot_species_s_statdead2, aes(x= decaystage)) + 
   geom_bar(aes(weight = Volume, fill = period, 
-           text = paste0(decaystage_code, ", period = ", period, ": ", round(Volume, 1), " m³/ha")), position = position_dodge2(width = 0.9, preserve = "single")) + 
+           text = paste0(decaystage, ", period = ", period, ": ", round(Volume, 1), " m³/ha")), position = position_dodge2(width = 0.9, preserve = "single")) + 
   guides(fill=guide_legend(title=legend$Per)) +   
   scale_y_continuous(name=legend$VL) + 
   scale_x_discrete(name=legend$DS),   tooltip = "text")
@@ -677,16 +685,16 @@ ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= decaystage_code))
 #| fig-cap: "Aandeel van de verschillende verteringsklassen in het liggende dode hout per periode. Het cijfer boven de grafiek geeft het totaal volume."
 #| warning: false
 
-volsum <- logs_by_decay_plot_species_s_statdead2 %>%
+volsum <- deadw_by_decay_plot_species_s_statdead2 %>%
   group_by(period) %>%
   summarise(Volume_lying= sum(Volume))
 
-logs_by_decay_plot_species_s_statdead2$title <- legend$VLDW 
+deadw_by_decay_plot_species_s_statdead2$title <- legend$VLDW 
 
 
-ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= period, y = Volume)) + 
-           geom_col(position = 'fill', aes(fill = decaystage_code, 
-           text = paste0(decaystage_code, ": ", round(Volume/volsum$Volume_lying*100, 1), "%"))) + 
+ggplotly(ggplot(deadw_by_decay_plot_species_s_statdead2, aes(x= period, y = Volume)) + 
+           geom_col(position = 'fill', aes(fill = decaystage, 
+           text = paste0(decaystage, ": ", round(Volume/volsum$Volume_lying*100, 1), "%"))) + 
            scale_fill_brewer(palette = "Dark2") +
            scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) +
            scale_x_discrete(name=legend$Per) +
@@ -698,7 +706,7 @@ ggplotly(ggplot(logs_by_decay_plot_species_s_statdead2, aes(x= period, y = Volum
 ## Verjonging
 
 Onder verjonging verstaan we alle jonge bomen en struiken met een diameter op borsthoogte van minder dan 5 cm.
-Ze wordt hier voorgesteld in 3 klassen: \<30, 30-50, 50-200 en \>200 cm.
+Ze wordt hier voorgesteld in 3 klassen: 0-50, 50-200 en \>200 cm.
 
 @fig-bosverjonging-{{label}} en @fig-bosverjongingrel-{{label}} geven de verjonging weer van de verschillende soorten en periodes.
 @fig-bosverjonging-{{label}} toont de absolute waarden en @fig-bosverjongingrel-{{label}} de relatieve.
@@ -711,54 +719,54 @@ Enkel de acht soorten met het hoogste stamtal in de meest recente periode worden
 #| fig-height: 6
 #| warning: false
 
-regeneration_by_plot_height_species_s <- regeneration_by_plot_height_species[regeneration_by_plot_height_species$plot_id %in% plotinfo_s$plot_id,]
+reg_by_plot_height_species_s <- reg_by_plot_height_species[reg_by_plot_height_species$plot_id %in% plotinfo_s$plot_id,]
 
-regeneration_by_plot_height_species_s_stat <- regeneration_by_plot_height_species_s %>%
+reg_by_plot_height_species_s_stat <- reg_by_plot_height_species_s %>%
   group_by(period, color) %>%
   summarise(name_reclassFULLNL= first(name_reclassFULLNL), StemNumber= sum(mean_number_of_regeneration_ha)) %>%
   left_join(Nplots, by="period")
 
-regeneration_by_plot_height_species_s_stat$StemNumber <- regeneration_by_plot_height_species_s_stat$StemNumber /regeneration_by_plot_height_species_s_stat$N
+reg_by_plot_height_species_s_stat$StemNumber <- reg_by_plot_height_species_s_stat$StemNumber /reg_by_plot_height_species_s_stat$N
 
-regeneration_by_plot_height_species_s_stat_summary <- regeneration_by_plot_height_species[regeneration_by_plot_height_species$plot_id %in% plotinfo_s$plot_id,] %>%
+reg_by_plot_height_species_s_stat_summary <- reg_by_plot_height_species[reg_by_plot_height_species$plot_id %in% plotinfo_s$plot_id,] %>%
   group_by(period, plot_id) %>%
   summarise(StemNumber= sum(mean_number_of_regeneration_ha)) %>%
   left_join(Nplots, by="period")
 
-regeneration_by_plot_height_species_s_stat_summary <- regeneration_by_plot_height_species_s_stat_summary %>%
+reg_by_plot_height_species_s_stat_summary <- reg_by_plot_height_species_s_stat_summary %>%
   group_by(period) %>%
   summarise(sum= sum(StemNumber), ci= 1.96*sd(StemNumber), N= first(N))
 
-regeneration_by_plot_height_species_s_stat_summary$mean <- regeneration_by_plot_height_species_s_stat_summary$sum /regeneration_by_plot_height_species_s_stat_summary$N
-regeneration_by_plot_height_species_s_stat_summary$lci <- regeneration_by_plot_height_species_s_stat_summary$mean - regeneration_by_plot_height_species_s_stat_summary$ci/sqrt(regeneration_by_plot_height_species_s_stat_summary$N)
-regeneration_by_plot_height_species_s_stat_summary$uci <- regeneration_by_plot_height_species_s_stat_summary$mean + regeneration_by_plot_height_species_s_stat_summary$ci/sqrt(regeneration_by_plot_height_species_s_stat_summary$N)
+reg_by_plot_height_species_s_stat_summary$mean <- reg_by_plot_height_species_s_stat_summary$sum /reg_by_plot_height_species_s_stat_summary$N
+reg_by_plot_height_species_s_stat_summary$lci <- reg_by_plot_height_species_s_stat_summary$mean - reg_by_plot_height_species_s_stat_summary$ci/sqrt(reg_by_plot_height_species_s_stat_summary$N)
+reg_by_plot_height_species_s_stat_summary$uci <- reg_by_plot_height_species_s_stat_summary$mean + reg_by_plot_height_species_s_stat_summary$ci/sqrt(reg_by_plot_height_species_s_stat_summary$N)
 
 
-regeneration_by_plot_height_species_s_8sp <- regeneration_by_plot_height_species_s_stat %>%
-  dplyr::filter(period==max(as.character(regeneration_by_plot_height_species_s_stat$period))) %>%
+reg_by_plot_height_species_s_8sp <- reg_by_plot_height_species_s_stat %>%
+  dplyr::filter(period==max(as.character(reg_by_plot_height_species_s_stat$period))) %>%
   top_n(8, StemNumber)
 
-regeneration_by_plot_height_species_s_stat_8sp <-  regeneration_by_plot_height_species_s_stat[regeneration_by_plot_height_species_s_stat$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL,]
+reg_by_plot_height_species_s_stat_8sp <-  reg_by_plot_height_species_s_stat[reg_by_plot_height_species_s_stat$name_reclassFULLNL %in% reg_by_plot_height_species_s_8sp$name_reclassFULLNL,]
 
-regeneration_by_plot_height_species_s_stat <-  regeneration_by_plot_height_species_s_stat[!(regeneration_by_plot_height_species_s_stat$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
+reg_by_plot_height_species_s_stat <-  reg_by_plot_height_species_s_stat[!(reg_by_plot_height_species_s_stat$name_reclassFULLNL %in% reg_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period) %>%
   summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72", StemNumber=sum(StemNumber), N= first(N)) %>%
-  rbind(regeneration_by_plot_height_species_s_stat_8sp) %>%
+  rbind(reg_by_plot_height_species_s_stat_8sp) %>%
   group_by(period, name_reclassFULLNL) %>%
   summarise(color=first(color), StemNumber=sum(StemNumber)) 
 
-mycolor <- unique(regeneration_by_plot_height_species_s_stat$color[ order(regeneration_by_plot_height_species_s_stat$name_reclassFULLNL)])
+mycolor <- unique(reg_by_plot_height_species_s_stat$color[ order(reg_by_plot_height_species_s_stat$name_reclassFULLNL)])
 
-ratio <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
+ratio <- if_else(mean(reg_by_plot_height_species_s_stat_summary$mean)>1500, 
      1000, 1)
-axisname <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
+axisname <- if_else(mean(reg_by_plot_height_species_s_stat_summary$mean)>1500, 
      legend$SN1000, legend$SN) 
 
 ggplotly(
-  ggplot(regeneration_by_plot_height_species_s_stat, aes(x= period)) + 
+  ggplot(reg_by_plot_height_species_s_stat, aes(x= period)) + 
     geom_bar(aes(fill = name_reclassFULLNL, weight= StemNumber/ratio, text = paste0(name_reclassFULLNL, ": ", round(StemNumber,1), " #/ha"))) + 
-    geom_point(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(x= period, y= mean/ratio, text = paste0("Totaal: ", round(mean,1), " [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
-    geom_errorbar(regeneration_by_plot_height_species_s_stat_summary, mapping =aes(ymin = lci/ratio, ymax=  uci/ratio), width=0.05, color = "black") +
+    geom_point(reg_by_plot_height_species_s_stat_summary, mapping = aes(x= period, y= mean/ratio, text = paste0("Totaal: ", round(mean,1), " [", round(lci, 1), " - ", round(uci, 1), "]")), color = "black") +
+    geom_errorbar(reg_by_plot_height_species_s_stat_summary, mapping =aes(ymin = lci/ratio, ymax=  uci/ratio), width=0.05, color = "black") +
     scale_y_continuous(name=axisname) + scale_x_discrete(name=legend$Per) + 
     scale_fill_manual(values =  mycolor) +
     guides(fill=guide_legend(title=legend$TS)), tooltip = "text")
@@ -774,13 +782,13 @@ ggplotly(
 #| warning: false
 
 ggplotly(
-  ggplot(regeneration_by_plot_height_species_s_stat, aes(x= period, y=StemNumber)) + 
-    geom_col(position = 'fill', aes(fill = name_reclassFULLNL, text = paste0(name_reclassFULLNL, ": ", round(StemNumber/regeneration_by_plot_height_species_s_stat_summary$mean*100, 1), "%"))) + 
+  ggplot(reg_by_plot_height_species_s_stat, aes(x= period, y=StemNumber)) + 
+    geom_col(position = 'fill', aes(fill = name_reclassFULLNL, text = paste0(name_reclassFULLNL, ": ", round(StemNumber/reg_by_plot_height_species_s_stat_summary$mean*100, 1), "%"))) + 
     scale_y_continuous(name="Aantal (%)", labels = scales::percent_format()) + 
     scale_x_discrete(name=legend$Per) +
     scale_fill_manual(values =  mycolor) +
     guides(fill=guide_legend(title=legend$TS)) +
-    geom_text(regeneration_by_plot_height_species_s_stat_summary, mapping = aes(label = round(mean,0), x = period, y = 1.05)), tooltip = "text"  )
+    geom_text(reg_by_plot_height_species_s_stat_summary, mapping = aes(label = round(mean,0), x = period, y = 1.05)), tooltip = "text"  )
 ```
 
 ```{r}
@@ -789,28 +797,28 @@ ggplotly(
 #| fig-height: 6
 #| warning: false
 
-regeneration_by_plot_height_species_s_8sp <-  regeneration_by_plot_height_species_s[regeneration_by_plot_height_species_s$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL,] %>%
+reg_by_plot_height_species_s_8sp <-  reg_by_plot_height_species_s[reg_by_plot_height_species_s$name_reclassFULLNL %in% reg_by_plot_height_species_s_8sp$name_reclassFULLNL,] %>%
   select(period, plot_id, height_class, name_reclassFULLNL= name_reclassFULLNL, color, StemNumber= mean_number_of_regeneration_ha)
 
 
-regeneration_by_plot_height_species_s_fig2 <-  regeneration_by_plot_height_species_s[!(regeneration_by_plot_height_species_s$name_reclassFULLNL %in% regeneration_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
+reg_by_plot_height_species_s_fig2 <-  reg_by_plot_height_species_s[!(reg_by_plot_height_species_s$name_reclassFULLNL %in% reg_by_plot_height_species_s_8sp$name_reclassFULLNL),] %>%
   group_by(period, plot_id, height_class) %>%
   summarise(name_reclassFULLNL=" Andere boomsoorten", color= "#282A72", StemNumber=sum(mean_number_of_regeneration_ha)) %>%
-  rbind(regeneration_by_plot_height_species_s_8sp) %>%
+  rbind(reg_by_plot_height_species_s_8sp) %>%
   group_by(period, name_reclassFULLNL, color, height_class) %>%
   summarise(StemNumber=sum(StemNumber)) %>%
   left_join(Nplots, by="period")
 
-regeneration_by_plot_height_species_s_fig2$StemNumber <- regeneration_by_plot_height_species_s_fig2$StemNumber /regeneration_by_plot_height_species_s_fig2$N
+reg_by_plot_height_species_s_fig2$StemNumber <- reg_by_plot_height_species_s_fig2$StemNumber /reg_by_plot_height_species_s_fig2$N
 
-mycolor <- unique(regeneration_by_plot_height_species_s_fig2$color[ order(regeneration_by_plot_height_species_s_fig2$name_reclassFULLNL)])
+mycolor <- unique(reg_by_plot_height_species_s_fig2$color[ order(reg_by_plot_height_species_s_fig2$name_reclassFULLNL)])
 
-ratio <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
+ratio <- if_else(mean(reg_by_plot_height_species_s_stat_summary$mean)>1500, 
      1000, 1)
-axisname <- if_else(mean(regeneration_by_plot_height_species_s_stat_summary$mean)>1500, 
+axisname <- if_else(mean(reg_by_plot_height_species_s_stat_summary$mean)>1500, 
      legend$SN1000, legend$SN)  
 
-ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)) +
+ggplotly(ggplot(reg_by_plot_height_species_s_fig2, aes(x= height_class)) +
            geom_bar(aes(fill = name_reclassFULLNL, weight = StemNumber/ratio, text = paste0(name_reclassFULLNL, ": ", round(StemNumber,1), " #/ha" ))) + 
            scale_y_continuous(name= axisname) + scale_x_discrete(name=legend$HC) +
            scale_fill_manual(values =  mycolor) +
@@ -829,4 +837,4 @@ ggplotly(ggplot(regeneration_by_plot_height_species_s_fig2, aes(x= height_class)
 ```
 :::
 
-[Naar tabs](#tabset-1-1-tab)
+[Terug naar de verschillende tabbladen](#tabset-1-1-tab)
