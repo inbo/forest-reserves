@@ -28,6 +28,8 @@ library(frictionless)
 ```
 
 ```{r}
+#| warning: false
+
 #data inlezen en definieren
 carbon_by_plot <- read_forresdat_table("carbon_by_plot", plottype = "CP")
 dendro_by_diam_plot_species <- read_forresdat_table("dendro_by_diam_plot_species", plottype = "CP")
@@ -38,8 +40,8 @@ reg_by_plot_height_species <- read_forresdat_table("reg_by_plot_height_species",
 plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
 
 
-all_names3 <- read.csv2('../../data/all_names4.csv', header = TRUE, dec=',', sep=';')
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
+all_names3 <- read.csv2('../../../data/all_names4.csv', header = TRUE, dec=',', sep=';')
+metadata <- read.csv2('../../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
 
 # link tussen species code en species name
 dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names3, by= "species")
@@ -76,6 +78,8 @@ reg_by_plot_height_species$height_class <- ifelse(is.na(reg_by_plot_height_speci
 reg_by_plot_height_species$height_class <- as.factor(reg_by_plot_height_species$height_class)
 
 reg_by_plot_height_species <- reg_by_plot_height_species[reg_by_plot_height_species$mean_number_of_regeneration_ha>0,]
+
+Qinterval <- qnorm(1-0.05/2)
 
 ```
 
@@ -160,7 +164,7 @@ De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` Â
 #| label: fig-foto-kaart{{label}}
 #| layout-ncol: 2
 #| fig.align: "center"
-#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte (b)."
+#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte(s) (b)."
 #| fig-subcap: true
 #| warning: false
 
@@ -195,7 +199,7 @@ Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
 
 ```{r}
 #| label: fig-volume-{{label}}
-#| fig-cap: "Volume per periode voor de levende, dode staande en dode liggende bomen. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Volume per periode voor de levende, dode staande en dode liggende bomen. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| warning: false
 
 #Plots
@@ -221,7 +225,7 @@ dendro_by_plot_s_stat2$value <- dendro_by_plot_s_stat2$value /dendro_by_plot_s_s
 #Voor summary neem plots samen en bereken mean
 dendro_by_plot_s_summ <- dendro_by_plot_s_stat %>%
   group_by(period) %>%
-  summarise(sum= sum(vol_tot), ci= 1.96*sd(vol_tot), N= first(N)) 
+  summarise(sum= sum(vol_tot), ci= Qinterval*sd(vol_tot), N= first(N)) 
 
 dendro_by_plot_s_summ$vol_tot <- dendro_by_plot_s_summ$sum /dendro_by_plot_s_summ$N
 dendro_by_plot_s_summ$lci <- dendro_by_plot_s_summ$vol_tot -dendro_by_plot_s_summ$ci/sqrt(dendro_by_plot_s_summ$N)
@@ -245,7 +249,7 @@ ggplotly(
 
 ```{r}
 #| label: fig-volumerel-{{label}}
-#| fig-cap: "Aandeel van de levende bomen, het staand en liggend dood hout in het totale volume. Het cijfer boven de grafiek geeft het totaal volume. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Aandeel van de levende bomen, het staand en liggend dood hout in het totale volume. Het cijfer boven de grafiek geeft het totaal volume. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| warning: false
 
 ggplotly(
@@ -261,7 +265,7 @@ ggplotly(
 
 ```{r}
 #| label: fig-carbon-{{label}}
-#| fig-cap: "Boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| warning: false
 
 carbon_by_plot_s_stat <- carbon_by_plot[carbon_by_plot$plot_id %in% plotinfo_s$plot_id,] %>%
@@ -277,21 +281,22 @@ carbon_by_plot_s_summ <- carbon_by_plot_s_stat %>%
             carbon_standing_bgb_t_ha_dead = sum(carbon_standing_bgb_t_ha_dead),
             N= first(N)) 
 
-carbon_by_plot_s_summ$Bovengronds <- carbon_by_plot_s_summ$carbon_standing_agb_t_ha_alive /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$Ondergronds <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_alive /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$Dood <- carbon_by_plot_s_summ$carbon_agb_t_ha_dead /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$"Dood ondergronds" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_dead /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Bovengronds levend" <- carbon_by_plot_s_summ$carbon_standing_agb_t_ha_alive /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Ondergronds levend" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_alive /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Bovengronds dood"  <- carbon_by_plot_s_summ$carbon_agb_t_ha_dead /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Ondergronds dood" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_dead /carbon_by_plot_s_summ$N
 
 carbon_by_plot_s_summ <- carbon_by_plot_s_summ %>%
-    pivot_longer(cols = c("Bovengronds", "Ondergronds", "Dood", "Dood ondergronds"),
+    pivot_longer(cols = c("Bovengronds levend", "Ondergronds levend", "Bovengronds dood", "Ondergronds dood"),
            names_to = "label", values_to = "value")
 
 carbon_by_plot_s_stat$C_tot <- carbon_by_plot_s_stat$carbon_standing_agb_t_ha_alive +
-  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_alive + carbon_by_plot_s_stat$Dood +   carbon_by_plot_s_stat$Dood_bgb
+  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_alive + carbon_by_plot_s_stat$carbon_agb_t_ha_dead +
+  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_dead
 
 carbon_by_plot_s_summ_summ <- carbon_by_plot_s_stat %>%
   group_by(period) %>%
-  summarise(sum= sum(C_tot), ci= 1.96*sd(C_tot), N= first(N)) 
+  summarise(sum= sum(C_tot), ci= Qinterval*sd(C_tot), N= first(N)) 
 
 
 carbon_by_plot_s_summ_summ$C_tot <- carbon_by_plot_s_summ_summ$sum /carbon_by_plot_s_summ_summ$N
@@ -319,7 +324,7 @@ Enkel de acht soorten met het hoogste levende volume in de meeste recente period
 
 ```{r}
 #| label: fig-soortenlevend-{{label}}
-#| fig-cap: "Boomsoortensamenstelling van de levende bomen per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Boomsoortensamenstelling van de levende bomen per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| fig-height: 6
 #| warning: false
 
@@ -358,7 +363,7 @@ dendro_by_diam_plot_species_s_stat$Volume <- dendro_by_diam_plot_species_s_stat$
 dendro_by_diam_plot_species_s_stat_summary <- dendro_by_diam_plot_species_s_stat_summary %>%
   left_join(Nplots, by="period") %>%
   group_by(period, label) %>%
-  summarise(sum= sum(value), ci= 1.96*sd(value), N= first(N)) 
+  summarise(sum= sum(value), ci= Qinterval*sd(value), N= first(N)) 
 
 dendro_by_diam_plot_species_s_stat_summary$mean <- dendro_by_diam_plot_species_s_stat_summary$sum /dendro_by_diam_plot_species_s_stat_summary$N
 dendro_by_diam_plot_species_s_stat_summary$lci <- dendro_by_diam_plot_species_s_stat_summary$mean - dendro_by_diam_plot_species_s_stat_summary$ci/sqrt(dendro_by_diam_plot_species_s_stat_summary$N)
@@ -466,7 +471,7 @@ ggplotly(ggplot(dendro_by_diam_plot_species_s_fig3, aes(x= dbh_class_5cm)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)),   tooltip = "text")
 
 periodnr <- length(levels(as.factor(as.numeric(dendro_by_diam_plot_species_s_fig2$period))))
-my_height <- 4*periodnr + 2
+my_height <- 3*periodnr + 4
 
 ```
 
@@ -514,7 +519,7 @@ Enkel de acht soorten met het hoogste totaal volume aan dood hout in de meeste r
 
 ```{r}
 #| label: fig-doodhouttreesp-{{label}}
-#| fig-cap: "Boomsoortensamenstelling van het dood hout (liggend en staand) per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Boomsoortensamenstelling van het dood hout (liggend en staand) per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| fig-height: 6
 #| warning: false
 
@@ -529,7 +534,7 @@ dendro_by_diam_plot_species_s_statdead <- dendro_by_diam_plot_species_s %>%
 
 dendro_by_diam_plot_species_s_statdead <- dendro_by_diam_plot_species_s_statdead %>%
   group_by(period) %>%
-  summarise(sum= sum(Volume_standing), ci= 1.96*sd(Volume_standing), N= first(N)) 
+  summarise(sum= sum(Volume_standing), ci= Qinterval*sd(Volume_standing), N= first(N)) 
 
 dendro_by_diam_plot_species_s_statdead$mean <- dendro_by_diam_plot_species_s_statdead$sum /dendro_by_diam_plot_species_s_statdead$N
 dendro_by_diam_plot_species_s_statdead$lci <- dendro_by_diam_plot_species_s_statdead$mean - dendro_by_diam_plot_species_s_statdead$ci/sqrt(dendro_by_diam_plot_species_s_statdead$N)
@@ -546,7 +551,7 @@ deadw_by_decay_plot_s_statdead <- deadw_by_decay_plot_s %>%
 # summary (strikt genomen klopt sd niet want berekend op aantal plots met waarnemingen)
 deadw_by_decay_plot_s_statdead <- deadw_by_decay_plot_s_statdead %>%
   group_by(period) %>%
-  summarise(sum= sum(Volume_lying), ci= (1.96*sd(Volume_lying)), N= first(N))
+  summarise(sum= sum(Volume_lying), ci= (Qinterval*sd(Volume_lying)), N= first(N))
 
 deadw_by_decay_plot_s_statdead$mean <- deadw_by_decay_plot_s_statdead$sum /deadw_by_decay_plot_s_statdead$N
 deadw_by_decay_plot_s_statdead$lci <- deadw_by_decay_plot_s_statdead$mean - deadw_by_decay_plot_s_statdead$ci/sqrt(deadw_by_decay_plot_s_statdead$N)
@@ -651,7 +656,7 @@ deadw_by_decay_plot_species_s_statdead2 <- deadw_by_decay_plot_species[deadw_by_
 
 deadw_by_decay_plot_species_s_statdead2 <- deadw_by_decay_plot_species_s_statdead2 %>%
   group_by(period, decaystage) %>%
-  summarise(sum= sum(Volume),  ci= (1.96*sd(Volume)), N= first(N))
+  summarise(sum= sum(Volume),  ci= (Qinterval*sd(Volume)), N= first(N))
 
 
 deadw_by_decay_plot_species_s_statdead2$Volume <- deadw_by_decay_plot_species_s_statdead2$sum /deadw_by_decay_plot_species_s_statdead2$N
@@ -715,7 +720,7 @@ Enkel de acht soorten met het hoogste stamtal in de meest recente periode worden
 
 ```{r}
 #| label: fig-bosverjonging-{{label}}
-#| fig-cap: "Aantal jonge bomen en struiken per soort en periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en de standaardafwijking aangegeven."
+#| fig-cap: "Aantal jonge bomen en struiken per soort en periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| fig-height: 6
 #| warning: false
 
@@ -735,7 +740,7 @@ reg_by_plot_height_species_s_stat_summary <- reg_by_plot_height_species[reg_by_p
 
 reg_by_plot_height_species_s_stat_summary <- reg_by_plot_height_species_s_stat_summary %>%
   group_by(period) %>%
-  summarise(sum= sum(StemNumber), ci= 1.96*sd(StemNumber), N= first(N))
+  summarise(sum= sum(StemNumber), ci= Qinterval*sd(StemNumber), N= first(N))
 
 reg_by_plot_height_species_s_stat_summary$mean <- reg_by_plot_height_species_s_stat_summary$sum /reg_by_plot_height_species_s_stat_summary$N
 reg_by_plot_height_species_s_stat_summary$lci <- reg_by_plot_height_species_s_stat_summary$mean - reg_by_plot_height_species_s_stat_summary$ci/sqrt(reg_by_plot_height_species_s_stat_summary$N)
@@ -835,6 +840,10 @@ ggplotly(ggplot(reg_by_plot_height_species_s_fig2, aes(x= height_class)) +
 #### Figuur 2: verschuiving IndVal
 
 ```
+:::
+
+::: {style="text-align: right"}
+Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r attr(carbon_by_plot, "forresdat")`](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"}.
 :::
 
 [Terug naar de verschillende tabbladen](#tabset-1-1-tab)
