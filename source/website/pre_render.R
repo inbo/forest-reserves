@@ -14,11 +14,11 @@ plotinfo2 <- arrange(plotinfo2, Nr)
 
 reserves <- unique(plotinfo2$forest_reserve)
 reserves_label <- gsub("\\s", "_", tolower(reserves))
-reserves_correct <- metadata[metadata$forest_reserve %in% reserves,]$Correct_name
+reserves_correct <- metadata[metadata$forest_reserve %in% reserves,]$Label_name
 
 reserves_kort <- metadata$forest_reserve[!(metadata$forest_reserve %in% reserves)]
 reserves_label_kort <- gsub("\\s", "_", tolower(reserves_kort))
-reserves_kort_correct <- metadata[metadata$forest_reserve %in% reserves_kort,]$Correct_name
+reserves_kort_correct <- metadata[metadata$forest_reserve %in% reserves_kort,]$Label_name
 
 # Generate child documents
 out_files <- autoqmd_generate_children(
