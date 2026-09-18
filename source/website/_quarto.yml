@@ -79,10 +79,10 @@ flandersqmd:
     - Instituut voor Natuur- en Bosonderzoek (INBO)
   reviewer:
   - name:
-      given: Els
-      family: Lommelen
-    email: els.lommelen@inbo.be
-    orcid: 0000-0002-3481-5684
+      given: Gerald
+      family: Louette
+    email: gerald.louette@inbo.be
+    orcid: 
     affiliation:
     - Instituut voor Natuur- en Bosonderzoek (INBO)
   public_report: false
@@ -165,5 +165,5 @@ website:
           - text: Zonienwoud - Joseph Zwaenepoel Reservaat
             file: fiches_reservaat_qmd/zwaenepoel.qmd
         # ADD-RESERVES-END
-      - meer.md
+      - meer.qmd
 bibliography: references.bib
