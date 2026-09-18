@@ -30,7 +30,7 @@ library(DT)
 ```{r}
 #| label: kaart Vlaanderen
 #| fig-align: center
-#| fig-cap: "Overzicht van gemonitorde bosreservaten in Vlaanderen. De grijze achtergrond geeft de bossen weer."
+#| fig-cap: "Overzicht van gemonitorde bosreservaten in Vlaanderen. De grijze achtergrond geeft alle bossen in Vlaanderen weer."
 knitr::include_graphics(here::here('Bosreservatenkaart3.jpg'))
 ```
 
@@ -61,7 +61,7 @@ In de tabel kan je doorklikken naar achtergrondinfo voor elk van de specifieke r
 
 ```{r}
 
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';')
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';', fileEncoding = "latin1")
 metadata$Beheer <- ifelse(metadata$Beheer == "","","*")
 
 tabel_plotinfo <- metadata %>%
