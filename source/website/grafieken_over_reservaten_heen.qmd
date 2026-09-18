@@ -8,57 +8,61 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE)
 
 library(tidyverse)
+library(utils)
 library(plotly)
 library(crosstalk)
-```
-
-::: panel-tabset
-## Koolstofvoorraad
-
-```{r}
-setwd("C:/Users/arno_thomaes/Documents/forest-reserves/data")
-stat_carbon <- read.csv2('carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
-stat_dendro <- read.csv2('dendro_by_plot.csv', header = TRUE, dec=',', sep=';')
-plotinfo <- read.csv2('plotinfo.csv', header = TRUE, dec=',', sep=';')
-metadata <- read.csv2('metadata.csv', header = TRUE, dec=',', sep=';')
-
-plotinfo$forest_reserve <- ifelse(plotinfo$forest_reserve == "Kersselaerspleyn", "Zwaenepoel", plotinfo$forest_reserve)
-plotinfo <- left_join(plotinfo, metadata, by = "forest_reserve")
-#plotinfo$Short_name <- as.factor(plotinfo$Short_name)
-
-stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
-   select(Short_name, period, BiomassAboveGr_t_ha, BiomassBelowGr_t_ha,
-           BiomassTotalLiving_t_ha, CarbonAboveGr_t_ha, CarbonBelowGr_t_ha,
-           CarbonTotalLiving_t_ha ) %>%
-  pivot_longer(cols = c("BiomassAboveGr_t_ha", "BiomassBelowGr_t_ha",
-           "BiomassTotalLiving_t_ha", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha",
-           "CarbonTotalLiving_t_ha"),
-           names_to = "label", values_to = "value") %>%
-  group_by(Short_name, period, label) %>%
-  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
-  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
-  mutate(offset_period = (period - 2.5) * 0.2)
-
- stat_carbon_wide$Short_name <- fct_reorder(stat_carbon_wide$Short_name, stat_carbon_wide$mean_BiomassAboveGr_t_ha)
-
+library(forrescalc)
+library(frictionless)
 ```
 
 Bosreservaten worden met een tussentijd van 10 jaar opgemeten om de evolutie in de tijd vast te stellen.
 De metingen uit de verschillende periodes worden hier aangegeven als periode 1 (2000-2009), 2 (2010-2019) en 3 (2020-2029).
 De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in het netwerk opgenomen en hebben dan enkel metingen in de latere periodes.
-In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
 
-In dit tabblad worden de resultaten voor de bovengrondse koolstofvoorraad (levende en dode bomen) weergegeven, op basis van de volumeresultaten van de cirkelplots.
-De ondergrondse koolstof omvat de wortels van deze bomen.
-Die zijn vervolgens omgerekend naar koolstofvoorraad door rekening te houden met het koolstofgehalte en specifieke houtdensiteiten per boomsoort.
-Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven de standaard afwijking.
+Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven 95% betrouwbaarheidsintervallen.
 
-*Opmerkingen* In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
+*Opmerkingen* In de onderstaande grafieken wordt bij de vier deelgebieden van het Zonienwoud - Joseph Zwaenepoel Reservaat de naam afgekort als ‘Z-‘ en de reservaten in Meerdaalwoud worden aangeduid met M-.
 
-Het bosreservaat Zwaenepoel is sinds de oprichting sterk uitgebreid, en ook het netwerk aan cirkelplots is sterk gewijzigd.
-De resultaten zijn hier dus niet éénduidig te vergelijken over de periodes.
+\*: Deze bossen bestaan deels of volledig uit beheerde delen.
 
-De reservaten met een \* bevatten ook beheerde delen.
+::: panel-tabset
+## Koolstofvoorraad
+
+```{r}
+#| warning: false
+
+stat_carbon <- read_forresdat_table("carbon_by_plot", plottype = "CP")
+stat_dendro <- read_forresdat_table("dendro_by_plot", plottype = "CP")
+plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
+
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
+
+plotinfo <- left_join(plotinfo, metadata, by = "forest_reserve")
+#plotinfo$Short_name <- as.factor(plotinfo$Short_name)
+
+Qinterval <- qnorm(1-0.05/2)
+
+#Kluisbos
+Kluisbosbeheer <- c(seq(1575, 1628, 1))
+plotinfo <- plotinfo[!plotinfo$plot_id %in% Kluisbosbeheer,]
+stat_carbon <- stat_carbon[!stat_carbon$plot_id %in% Kluisbosbeheer,]
+stat_dendro <- stat_dendro[!stat_dendro$plot_id %in% Kluisbosbeheer,]
+
+stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
+   select(Short_name, period, carbon_standing_agb_t_ha_alive, carbon_standing_bgb_t_ha_alive) %>%
+  pivot_longer(cols = c("carbon_standing_agb_t_ha_alive", "carbon_standing_bgb_t_ha_alive"),
+           names_to = "label", values_to = "value") %>%
+  group_by(Short_name, period, label) %>%
+  summarise(mean= mean(value), uci_diff= Qinterval*sd(value)/sqrt(n()))  %>%
+  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
+  mutate(offset_period = (period - 2.5) * 0.2)
+
+ stat_carbon_wide$Short_name <- fct_reorder(stat_carbon_wide$Short_name, stat_carbon_wide$mean_carbon_standing_agb_t_ha_alive)
+
+```
+
+In dit tabblad worden de resultaten voor de bovengrondse en ondergrondse (wortels) koolstofvoorraad van levende en staande dode bomen weergegeven, op basis van de volumeresultaten van de cirkelplots.
+Volumes zijn omgerekend naar koolstofvoorraad door rekening te houden met het koolstofgehalte en specifieke houtdensiteiten per boomsoort.
 
 ```{r}
 sd <- SharedData$new(stat_carbon_wide)
@@ -75,9 +79,9 @@ bscols(widths = c(4, 4),
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_CarbonAboveGr_t_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_CarbonAboveGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plot_ly(x = ~mean_carbon_standing_agb_t_ha_alive, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_carbon_standing_agb_t_ha_alive)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Bovengrondse koolstofvoorraad (ton C/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -88,9 +92,9 @@ bscols(widths = c(6, 6),
                )
         ),
        sd %>%
-        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plot_ly(x = ~mean_carbon_standing_bgb_t_ha_alive, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_carbon_standing_bgb_t_ha_alive)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Ondergrondse koolstofvoorraad (ton C/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -105,30 +109,19 @@ bscols(widths = c(6, 6),
 
 ## Houtvolume
 
-Bosreservaten worden met een tussentijd van 10 jaar opgemeten om de evolutie in de tijd vast te stellen.
-De metingen uit de verschillende periodes worden hier aangegeven als periode 1 (2000-2009), 2 (2010-2019) en 3 (2020-2029).
-De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in het netwerk opgenomen en hebben dan enkel metingen in de latere periodes.
-
 In dit tabblad worden de resultaten voor de bovengrondse volumes (levend en dood) weergegeven, op basis van de resultaten van de cirkelplots.
-Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven de standaard afwijking.
-
-*Opmerkingen* In de onderstaande grafieken wordt Zonienwoud - Joseph Zwaenepoel Reservaat afgekort als Z- J. Zwaenepoel en de reservaten in Meerdaalwoud worden aangeduid met M-.
-
-Het bosreservaat Zwaenepoel is sinds de oprichting sterk uitgebreid, en ook het netwerk aan cirkelplots is sterk gewijzigd.
-De resultaten zijn hier dus niet éénduidig te vergelijken over de periodes.
-
-De reservaten met een \* bevatten ook beheerde delen.
 
 ```{r}
 
-stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
+#stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
+stat_dendro$vol_deadw_m3_ha <- stat_dendro$vol_dead_standing_m3_ha + stat_dendro$vol_log_m3_ha
 
 stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %>%
   select(Short_name, period, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
   pivot_longer(cols = c("vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha"),
            names_to = "label", values_to = "value") %>%
   group_by(Short_name, period, label) %>%
-  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
+  summarise(mean= mean(value), uci_diff= Qinterval*sd(value)/sqrt(n()))  %>%
   pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
   mutate(offset_period = (period - 2.5) * 0.2)
 
@@ -147,7 +140,7 @@ bscols(widths = c(6, 6),
        sd %>%
         plot_ly(x = ~mean_vol_alive_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume levende bomen (m³/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -160,7 +153,7 @@ bscols(widths = c(6, 6),
        sd %>%
         plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume dood hout (m³/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -176,7 +169,7 @@ bscols(widths = c(6, 6),
        sd %>%
         plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_dead_standing_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume staand dood hout (m³/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -189,7 +182,7 @@ bscols(widths = c(6, 6),
        sd %>%
         plot_ly(x = ~mean_vol_log_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_log_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Periode')),
+        plotly::layout(legend = list(title = list(text = 'Periode')),
                xaxis = list(title = "Volume liggend dood hout (m³/ha)"),
                yaxis = list(
                  title = "Bosreservaten",
@@ -201,4 +194,8 @@ bscols(widths = c(6, 6),
         )
 )
 ```
+:::
+
+::: {style="text-align: right"}
+Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r attr(stat_carbon, "forresdat")`](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"}.
 :::
