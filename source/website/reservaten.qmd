@@ -63,6 +63,7 @@ In de tabel kan je doorklikken naar achtergrondinfo voor elk van de specifieke r
 
 metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec=',', sep=';', fileEncoding = "latin1")
 metadata$Beheer <- ifelse(metadata$Beheer == "","","*")
+metadata$forest_reserve <- gsub("ë", "_", metadata$forest_reserve)
 
 tabel_plotinfo <- metadata %>%
   mutate(
