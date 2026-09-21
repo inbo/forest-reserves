@@ -43,6 +43,8 @@ plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FA
 all_names3 <- read.csv2('../../../data/all_names4.csv', header = TRUE, dec=',', sep=';')
 metadata <- read.csv2('../../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
 
+version <- gsub("\\s", "_", attr(carbon_by_plot, "forresdat"))
+
 # link tussen species code en species name
 dendro_by_diam_plot_species <- left_join(dendro_by_diam_plot_species, all_names3, by= "species")
 deadw_by_decay_plot_species <- left_join(deadw_by_decay_plot_species, all_names3, by= "species")
@@ -62,20 +64,22 @@ dendro_by_diam_plot_species$dbh_class_5cm <- str_remove(dendro_by_diam_plot_spec
 dendro_by_diam_plot_species$dbh_class_5cm <- factor(dendro_by_diam_plot_species$dbh_class_5cm, 
   levels = c("5-10", "10-15", "15-20", "20-25", "25-30", "30-35", "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75", "75-80", "80-85", "85-90", 
 "90-95", "95-100", "100-105","105-110", "110-115", "115-120", "120-125", "125-130", "130-135", "135-140", "140-145", "145-150", "150-155", "155-160"))
-# Problem: dit kan wellicht eleganter onafhankelijk van welke levels precent zijn
+# Problem: dit kan wellicht eleganter onafhankelijk van welke levels present zijn
 
 reg_by_plot_height_species$height_class <- ifelse(reg_by_plot_height_species$height_class<2010, "0-50",
     ifelse(reg_by_plot_height_species$height_class==3000, "50-200", 
-    ifelse(reg_by_plot_height_species$height_class==4000, "> 200",
-    ifelse(reg_by_plot_height_species$height_class==4000, "> 200",
+    ifelse(reg_by_plot_height_species$height_class==4000, ">200",
+    ifelse(reg_by_plot_height_species$height_class==4000, ">200",
     ifelse(reg_by_plot_height_species$height_class==5000, "0-50",
     ifelse(reg_by_plot_height_species$height_class==6000, "50-200",      
-    ifelse(reg_by_plot_height_species$height_class==7000, "> 200",  "50-200")))))))
+    ifelse(reg_by_plot_height_species$height_class==7000, ">200",  "50-200")))))))
       
 #unique(reg_by_plot_height_species$height_class)
 reg_by_plot_height_species$height_class <- ifelse(is.na(reg_by_plot_height_species$height_class),"U", reg_by_plot_height_species$height_class)
 
-reg_by_plot_height_species$height_class <- as.factor(reg_by_plot_height_species$height_class)
+reg_by_plot_height_species$height_class <- factor(reg_by_plot_height_species$height_class, 
+  levels = c("0-50", "50-200", ">200", "U"))
+
 
 reg_by_plot_height_species <- reg_by_plot_height_species[reg_by_plot_height_species$mean_number_of_regeneration_ha>0,]
 
@@ -140,7 +144,7 @@ plotinfo_s <- plotinfo[plotinfo$forest_reserve == "{{selected_reserve}}",]
 metadata_s <- metadata[metadata$forest_reserve == "{{selected_reserve}}",]
 
 #Kluisbos
-Kluisbosbeheer <- c(seq(1575, 1628, 1))
+Kluisbosbeheer <- c(seq(1574, 1628, 1))
 plotinfo_s <- plotinfo_s[!plotinfo_s$plot_id %in% Kluisbosbeheer,]
 
 name <- metadata_s$Correct_name
@@ -155,7 +159,7 @@ Nplots <- Nplots_F %>% select(N, period)
 
 ## `r name`
 
-Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
+`r first(metadata_s$Start)`Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
 Het beheer `r ifelse(first(metadata_s$managment)==1,"","is sinds")` `r first(metadata_s$year_abandonmentNL)` `r ifelse(first(metadata_s$managment)==1,"","stopgezet")` en het gebied kreeg het officiële reservaatstatuut sinds `r first(metadata_s$year_reserveNL)`.
 Het vegetatietype is `r first(metadata_s$vegetation_typeNL)`.
 De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` °C en de gemiddelde jaarlijkse neerslag `r first(metadata_s$m_ann_prec)` mm. `r first(metadata_s$Beheer)`
@@ -194,12 +198,12 @@ Alle onderstaande resultaten zijn gebaseerd op de metingen in de cirkelplots.
 ::: panel-tabset
 ## Biomassa
 
-@fig-volume-{{label}} en @fig-volumerel-{{label}} geven het totaal volume per periode voor de levende, staande dode en liggende dode bomen, @fig-volume-{{label}} in absolute waarden en @fig-volumerel-{{label}} in relatieve waarden.
+@fig-volume-{{label}} en @fig-volumerel-{{label}} geven het totaal volume per periode voor de levende, dode staande en liggende bomen, @fig-volume-{{label}} in absolute waarden en @fig-volumerel-{{label}} in relatieve waarden.
 @fig-carbon-{{label}} geeft de boven- en ondergrondse koolstofvoorraad in de levende en dode bomen per periode.
 
 ```{r}
 #| label: fig-volume-{{label}}
-#| fig-cap: "Volume per periode voor de levende, dode staande en dode liggende bomen. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
+#| fig-cap: "Volume per periode voor de levende, dode staande en liggende bomen. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| warning: false
 
 #Plots
@@ -519,7 +523,7 @@ Enkel de acht soorten met het hoogste totaal volume aan dood hout in de meeste r
 
 ```{r}
 #| label: fig-doodhouttreesp-{{label}}
-#| fig-cap: "Boomsoortensamenstelling van het dood hout (liggend en staand) per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
+#| fig-cap: "Boomsoortensamenstelling van het volume dood hout (staand en liggend) per periode, in absolute cijfers. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| fig-height: 6
 #| warning: false
 
@@ -624,7 +628,7 @@ ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) +
 
 ```{r}
 #| label: fig-doodhoutrel-{{label}}
-#| fig-cap: "Aandeel van de verschillende soorten in het dode hout (liggend en staand)  per periode. Het cijfer boven de grafiek geeft het totaal volume."
+#| fig-cap: "Aandeel van de verschillende soorten in het volume dode hout (staand en liggend)  per periode. Het cijfer boven de grafiek geeft het totaal volume."
 #| fig-height: 6
 #| warning: false
 
@@ -645,7 +649,7 @@ De volgende figuren focussen op de [verteringsklassen van het liggend dood hout]
 
 ```{r}
 #| label: fig-verteringskl-{{label}}
-#| fig-cap: "Volume van het liggende dode hout per verteringsklasse en periode, in absolute cijfers."
+#| fig-cap: "Volume van het liggend dood hout per verteringsklasse en periode, in absolute cijfers."
 #| warning: false
 
 #### Figure 3: Decay stage
@@ -687,7 +691,7 @@ ggplotly(ggplot(deadw_by_decay_plot_species_s_statdead2, aes(x= decaystage)) +
 
 ```{r}
 #| label: fig-verteringsklrel-{{label}}
-#| fig-cap: "Aandeel van de verschillende verteringsklassen in het liggende dode hout per periode. Het cijfer boven de grafiek geeft het totaal volume."
+#| fig-cap: "Aandeel van de verschillende verteringsklassen in het liggend dood hout per periode. Het cijfer boven de grafiek geeft het totaal volume."
 #| warning: false
 
 volsum <- deadw_by_decay_plot_species_s_statdead2 %>%
@@ -832,18 +836,11 @@ ggplotly(ggplot(reg_by_plot_height_species_s_fig2, aes(x= height_class)) +
            facet_wrap(~period), tooltip = "text" )
 
 
-
-
-
-### herblayer: not uploaded
-#### Figuur 1: samenstelling
-#### Figuur 2: verschuiving IndVal
-
 ```
 :::
 
 ::: {style="text-align: right"}
-Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r attr(carbon_by_plot, "forresdat")`](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"}.
+Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r version`](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"}.
 :::
 
 [Terug naar de verschillende tabbladen](#tabset-1-1-tab)
