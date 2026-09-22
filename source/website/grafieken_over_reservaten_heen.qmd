@@ -85,7 +85,6 @@ Volumes zijn omgerekend naar koolstofvoorraad door rekening te houden met het ko
 sd <- SharedData$new(stat_carbon_wide)
 
 bscols(widths = c(4, 4),
-       filter_select("Short_name", "Selecteer bosreservaten", sd, ~Short_name),
        filter_checkbox("period", "Selecteer periode", sd, ~period))
 
 # volgende code is qua logica gebaseerd op https://stackoverflow.com/questions/50921790/split-points-by-a-factor-in-a-plotly-scatter-plot met
@@ -146,7 +145,7 @@ In dit tabblad worden de resultaten voor de bovengrondse volumes (levend en dood
 #stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
 stat_dendro[is.na(stat_dendro)] <- 0
 
-stat_dendro$vol_log_m3_ha <- stat_dendro$vol_log_m3_ha + stat_dendro$vol_log_above30cm_m3_ha + stat_dendro$vol_lis_10_30cm_m3_ha
+stat_dendro$vol_log_m3_ha <- ifelse(stat_dendro$vol_log_m3_ha==0, stat_dendro$vol_log_above30cm_m3_ha + stat_dendro$vol_lis_10_30cm_m3_ha, stat_dendro$vol_log_m3_ha)
 
 stat_dendro$vol_deadw_m3_ha <- stat_dendro$vol_dead_standing_m3_ha + stat_dendro$vol_log_m3_ha
 
@@ -170,7 +169,6 @@ stat_dendro_wide$Short_name <- fct_reorder(stat_dendro_wide$Short_name, stat_den
 sd <- SharedData$new(stat_dendro_wide)
 
 bscols(widths = c(4, 4),
-       filter_select("Short_name", "Selecteer bosreservaten", sd, ~Short_name),
        filter_checkbox("period", "Selecteer periode", sd, ~period))
 
 bscols(widths = c(6, 6),
@@ -247,5 +245,5 @@ bscols(widths = c(6, 6),
 :::
 
 ::: {style="text-align: right"}
-Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r version`](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"}.
+Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r version`](https://github.com/inbo/forresdat){target="_blank"}.
 :::
