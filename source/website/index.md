@@ -45,6 +45,8 @@ Sindsdien zijn het juridisch gezien ‘natuurreservaten’ geworden (beheertype 
 Voor de eenvoud blijven we deze ‘bewust onbeheerde bossen waar onderzoek gebeurt’ verder ‘bosreservaten’ noemen.
 Het [Agentschap voor Natuur en Bos (ANB)](https://natuurenbos.be/){target="_blank"} is verantwoordelijk voor de erkenning van deze reservaten, terwijl het [Instituut voor Natuur- en Bosonderzoek (INBO)](https://www.vlaanderen.be/inbo/home/){target="_blank"} verantwoordelijk is voor het wetenschappelijk onderzoek.
 
+Het INBO voert ook onderzoek uit in [open begraasde climaxvegetaties](https://sites.google.com/inbo.be/procesbeheer/methodiek/gebieden){target="_blank"}.
+
 </details>
 
 <details>
@@ -71,7 +73,7 @@ Sommige bosreservaten zijn pas later aan het netwerk toegevoegd en hebben dan en
 
 Meer info over wat er allemaal wordt opgemeten, wanneer en hoe, kan je vinden in het [monitoringsprotocol](https://purews.inbo.be/ws/portalfiles/portal/116923207/Vandekerkhove_etal_2024_MonitoringProgrammeOnStrictForestReservesFlanders.pdf){target="_blank"} (Engelstalig).
 
-De plotdata van de bosreservaten is open gepubliceerd op [Github](https://github.com/inbo/forresdat/tree/develop/data){target="_blank"} en [Zenodo](https://zenodo.org/records/19111538){target="_blank"}.
+De plotdata van de bosreservaten is open gepubliceerd op [Github](https://github.com/inbo/forresdat){target="_blank"} en [Zenodo](https://zenodo.org/records/19111538){target="_blank"}.
 Alle grafieken die op deze website te vinden zijn, werden met deze data gemaakt.
 
 </details>
