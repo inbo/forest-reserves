@@ -253,11 +253,14 @@ ggplotly(
 #| label: fig-volumerel-{{label}}
 #| fig-cap: "Aandeel van de levende bomen, het staand en liggend dood hout in het totale volume. Het cijfer boven de grafiek geeft het totaal volume. In zwart wordt het totaal gemiddelde en het 95% betrouwbaarheidsinterval aangegeven."
 #| warning: false
+ 
+dendro_by_plot_s_stat2 <- left_join(dendro_by_plot_s_stat2, dendro_by_plot_s_summ, by = "period")
+  
 
 ggplotly(
   ggplot(dendro_by_plot_s_stat2, aes(x= period)) + 
   geom_col(position = 'fill', aes(y = value, fill = label, 
-           text = paste0(label, ": ", round(value/dendro_by_plot_s_summ$vol_tot*100, 1), "%"))) + 
+           text = paste0(label, ": ", round(value/vol_tot*100, 1), "%"))) + 
   scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) + scale_x_discrete(name=legend$Per) + 
   guides(fill=guide_legend(title=legend$SoT)) +
   geom_text(dendro_by_plot_s_summ, mapping = aes(label = round(vol_tot,1), x = period, y = 1.05)),   tooltip = "text")
@@ -421,10 +424,12 @@ ggplotly(
 #| fig-height: 6
 #| warning: false
 
+dendro_by_diam_plot_species_s_stat <- left_join(dendro_by_diam_plot_species_s_stat, dendro_by_diam_plot_species_s_stat_summary, by = c("period","label"))
+
 ggplotly(
   ggplot(dendro_by_diam_plot_species_s_stat, aes(x= period, y=value)) + 
   geom_col(position = 'fill', aes(fill = name_reclassFULLNL, 
-           text = paste0(name_reclassFULLNL, ": ", round(value/dendro_by_diam_plot_species_s_stat_summary$mean*100, 1), "%"))) + 
+           text = paste0(name_reclassFULLNL, ": ", round(value/mean*100, 1), "%"))) + 
   scale_y_continuous(name="Relatieve samenstelling (%)", labels = scales::percent_format()) + scale_x_discrete(name=legend$Per) + 
   scale_fill_manual(values =  mycolor) +
   guides(fill=guide_legend(title=legend$TS)) +
@@ -576,6 +581,9 @@ dendro_by_diam_plot_species_s_statdead2 <- dendro_by_diam_plot_species_s %>%
 dendro_by_diam_plot_species_s_statdead2$value <- dendro_by_diam_plot_species_s_statdead2$Volume_standing /dendro_by_diam_plot_species_s_statdead2$N
 
 #per tree species lying
+deadw_by_decay_plot_species$vol_log_m3_ha <- ifelse(is.na(deadw_by_decay_plot_species$vol_log_m3_ha), deadw_by_decay_plot_species$vol_log_above30cm_m3_ha + deadw_by_decay_plot_species$vol_lis_10_30cm_m3_ha, deadw_by_decay_plot_species$vol_log_m3_ha)
+
+
 deadw_by_decay_plot_species_s_statdead <- deadw_by_decay_plot_species[deadw_by_decay_plot_species$plot_id %in% plotinfo_s$plot_id,] %>%
   group_by(period, name_reclassFULLNL) %>%
   summarise(color= first(color), Volume_lying= sum(vol_log_m3_ha)) %>%
@@ -633,9 +641,11 @@ ggplotly(ggplot(dead_wood_species_combined, aes(x= period)) +
 #| fig-height: 6
 #| warning: false
 
+dead_wood_species_combined <- left_join(dead_wood_species_combined, dead_wood_combined, by = c("period","label"))
+
 ggplotly(ggplot(dead_wood_species_combined, aes(x= period, y = value)) + 
            geom_col(position = 'fill', aes(fill = name_reclassFULLNL, 
-           text = paste0(name_reclassFULLNL, ": ", round(value/dead_wood_combined$mean*100, 1), "%"))) + 
+           text = paste0(name_reclassFULLNL, ": ", round(value/mean*100, 1), "%"))) + 
            scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) +
            scale_x_discrete(name=legend$Per) +
            scale_fill_manual(values =  mycolor) +
@@ -704,10 +714,11 @@ volsum <- deadw_by_decay_plot_species_s_statdead2 %>%
 
 deadw_by_decay_plot_species_s_statdead2$title <- legend$VLDW 
 
+deadw_by_decay_plot_species_s_statdead2 <- left_join(deadw_by_decay_plot_species_s_statdead2, volsum, by = c("period"))
 
 ggplotly(ggplot(deadw_by_decay_plot_species_s_statdead2, aes(x= period, y = Volume)) + 
            geom_col(position = 'fill', aes(fill = decaystage, 
-           text = paste0(decaystage, ": ", round(Volume/volsum$Volume_lying*100, 1), "%"))) + 
+           text = paste0(decaystage, ": ", round(Volume/Volume_lying*100, 1), "%"))) + 
            scale_fill_brewer(palette = "Dark2") +
            scale_y_continuous(name="Volume (%)", labels = scales::percent_format()) +
            scale_x_discrete(name=legend$Per) +
@@ -794,9 +805,11 @@ ggplotly(
 #| fig-height: 6
 #| warning: false
 
+reg_by_plot_height_species_s_stat <- left_join(reg_by_plot_height_species_s_stat, reg_by_plot_height_species_s_stat_summary, by = c("period"))
+
 ggplotly(
   ggplot(reg_by_plot_height_species_s_stat, aes(x= period, y=StemNumber)) + 
-    geom_col(position = 'fill', aes(fill = name_reclassFULLNL, text = paste0(name_reclassFULLNL, ": ", round(StemNumber/reg_by_plot_height_species_s_stat_summary$mean*100, 1), "%"))) + 
+    geom_col(position = 'fill', aes(fill = name_reclassFULLNL, text = paste0(name_reclassFULLNL, ": ", round(StemNumber/mean*100, 1), "%"))) + 
     scale_y_continuous(name="Aantal (%)", labels = scales::percent_format()) + 
     scale_x_discrete(name=legend$Per) +
     scale_fill_manual(values =  mycolor) +
