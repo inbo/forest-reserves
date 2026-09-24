@@ -28,9 +28,10 @@ Als we de spontane ontwikkeling wetenschappelijk willen opvolgen is het belangri
 
 De reservaten moeten groot genoeg zijn zodat spontane processen volwaardig kunnen ontwikkelen.
 Daarbij geldt: hoe groter hoe beter.
-De minimale oppervlakte die nodig is 20-30 ha voor een compacte vorm waar geen beheerde zones in liggen die de dynamiek verstoren.
+De minimale oppervlakte die nodig is om spontane dynamieken op te volgen bedraagt 20-50 ha, al naargelang het bostype.
+Bovendien heeft het reservaat best een compacte vorm waar geen beheerde zones in liggen die de dynamiek zouden beïnvloeden.
 
-Slechts een beperkt aantal bosreservaten kennen deels wel nog een specifiek beheer.
+In de monitoring zijn ook enkele bossen opgenomen die (deels) beheerd zijn.
 Dit wordt steeds weergegeven bij de uitleg van de reservaten zelf.
 
 </details>
@@ -45,7 +46,7 @@ Sindsdien zijn het juridisch gezien ‘natuurreservaten’ geworden (beheertype 
 Voor de eenvoud blijven we deze ‘bewust onbeheerde bossen waar onderzoek gebeurt’ verder ‘bosreservaten’ noemen.
 Het [Agentschap voor Natuur en Bos (ANB)](https://natuurenbos.be/){target="_blank"} is verantwoordelijk voor de erkenning van deze reservaten, terwijl het [Instituut voor Natuur- en Bosonderzoek (INBO)](https://www.vlaanderen.be/inbo/home/){target="_blank"} verantwoordelijk is voor het wetenschappelijk onderzoek.
 
-Het INBO voert ook onderzoek uit in [open begraasde climaxvegetaties](https://sites.google.com/inbo.be/procesbeheer/methodiek/gebieden){target="_blank"}.
+Het INBO voert ook onderzoek uit in andere onbeheerde climaxvegetaties, [mozaieklandschappen door extensieve begrazing](https://sites.google.com/inbo.be/procesbeheer/methodiek/gebieden){target="_blank"}.
 
 </details>
 
@@ -87,3 +88,4 @@ Ook elders in Europa zijn er bosreservaten waar gelijkaardig onderzoek gebeurt n
 Sinds 2019 hebben deze onderzoekers elkaar gevonden in het [EUFORIA netwerk](https://www.wsl.ch/de/projekte/euforia/){target="_blank"}.
 
 </details>
+
