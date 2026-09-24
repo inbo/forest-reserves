@@ -115,6 +115,8 @@ website:
     - text: Lijst met reservaten
       file: reservaten.qmd
   sidebar:
+    logo: _extensions/flandersqmd-website/img/inbo-logo-nl.svg
+    logo-href: https://www.vlaanderen.be/inbo/home/
     style: docked
     contents:
       - index.md
