@@ -102,7 +102,7 @@ De data van de kernvlaktes worden binnenkort toegevoegd aan deze site.
 #| label: fig-foto-kaart{{label}}
 #| layout-ncol: 2
 #| fig.align: "center"
-#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte (b)."
+#| fig-cap: "Beeld (a) en kaart van het reservaat met de ligging van de cirkelplots en kernvlakte(s) (b)."
 #| fig-subcap: true
 
 
