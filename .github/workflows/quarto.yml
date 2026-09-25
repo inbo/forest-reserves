@@ -10,15 +10,13 @@ jobs:
     env:
       RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
       QUARTO_SOURCE: "source/website"
-      QUARTO_OUTPUT: "output/website"
+      QUARTO_OUTPUT: ""
     permissions:
       contents: read
     steps:
       - name: "Render quarto"
         uses: inbo/actions/quarto_render@main
         with:
-          path: "source/website"
-          output: "output/website"
           extra-packages:
             crosstalk
             DT
