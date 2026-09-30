@@ -11,9 +11,12 @@ required:
 - organisation
 - spelling
 spelling:
-  default: en-GB
+  default: nl-BE
   ignore:
   - .github
   - LICENSE.md
+  other:
+    en-GB:
+    - README.md
 pak: []
 gha_install: []
