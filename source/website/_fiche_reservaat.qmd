@@ -549,7 +549,7 @@ dendro_by_diam_plot_species_s_statdead$uci <- dendro_by_diam_plot_species_s_stat
 
 #Lying dead wood
 # summary per plot
-deadw_by_decay_plot$vol_log_m3_ha <- 
+
 deadw_by_decay_plot$vol_log_m3_ha <- ifelse(is.na(deadw_by_decay_plot$vol_log_m3_ha), deadw_by_decay_plot$vol_log_above30cm_m3_ha + deadw_by_decay_plot$vol_lis_10_30cm_m3_ha, deadw_by_decay_plot$vol_log_m3_ha)
 
 deadw_by_decay_plot_s <- deadw_by_decay_plot[deadw_by_decay_plot$plot_id %in% plotinfo_s$plot_id,]
