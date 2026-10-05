@@ -9,7 +9,7 @@ execute:
 
 Om de vertering van dood hout te bestuderen wordt het ingedeeld in zogenaamde 
 Verteringsklassen. De afbakening van deze klassen wordt internationaal gebruikt en 
-zijn gebasseerd op visuele karakteristieken en de zachtheid van het hout. Voor 
+zijn gebaseerd op visuele karakteristieken en de zachtheid van het hout. Voor 
 dit laatste wordt gekeken hoe diep een mes kan doordringen in het hout.  
 
 ```{r}
