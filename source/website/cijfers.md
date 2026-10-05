@@ -16,3 +16,6 @@ Ben je meer op zoek naar detailgegevens van één specifiek gebied, dan moet je 
 Via een overzichtspagina kan je een reservaat selecteren, en vervolgens een hele reeks meetresultaten te zien krijgen.
 Momenteel zijn dat vooral typische bosbouwkundige parameters zoals stamtal, grondvlak en volume per boomsoort, volumes en afbraakklassen van dood hout, diameterverdelingen en info over verjonging.
 Je ziet er ook de evolutie doorheen de tijd.
+Voor heel wat reservaten is er zowel een grid van steekproefcirkels als een kernvlakte of een transect aanwezig.
+Momenteel worden hier enkel de resultaten van de cirkelplots getoond.
+De overige gegevens worden later toegevoegd.
