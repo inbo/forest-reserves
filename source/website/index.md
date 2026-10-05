@@ -74,7 +74,7 @@ Sommige bosreservaten zijn pas later aan het netwerk toegevoegd en hebben dan en
 
 Meer info over wat er allemaal wordt opgemeten, wanneer en hoe, kan je vinden in het [monitoringsprotocol](https://purews.inbo.be/ws/portalfiles/portal/116923207/Vandekerkhove_etal_2024_MonitoringProgrammeOnStrictForestReservesFlanders.pdf){target="_blank"} (Engelstalig).
 
-De plotdata van de bosreservaten is open gepubliceerd op [Github](https://github.com/inbo/forresdat){target="_blank"} en [Zenodo](https://zenodo.org/records/19111538){target="_blank"}.
+De plotdata van de bosreservaten is open gepubliceerd op [Zenodo](https://zenodo.org/records/19111538){target="_blank"}.
 Alle grafieken die op deze website te vinden zijn, werden met deze data gemaakt.
 
 </details>
@@ -88,4 +88,3 @@ Ook elders in Europa zijn er bosreservaten waar gelijkaardig onderzoek gebeurt n
 Sinds 2019 hebben deze onderzoekers elkaar gevonden in het [EUFORIA netwerk](https://www.wsl.ch/de/projekte/euforia/){target="_blank"}.
 
 </details>
-
