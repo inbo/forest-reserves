@@ -157,7 +157,7 @@ Nplots <- Nplots_F %>% select(N, period)
 `r first(metadata_s$Start)`Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
 Het beheer `r ifelse(first(metadata_s$managment)==1,"","is sinds")` `r first(metadata_s$year_abandonmentNL)` `r ifelse(first(metadata_s$managment)==1,"","stopgezet")` en het gebied kreeg het officiële reservaatstatuut sinds `r first(metadata_s$year_reserveNL)`.
 Het vegetatietype is `r first(metadata_s$vegetation_typeNL)`.
-De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` °C en de gemiddelde jaarlijkse neerslag `r first(metadata_s$m_ann_prec)` mm. `r first(metadata_s$Beheer)`
+`r first(metadata_s$Beheer)`
 
 ```{r}
 #| label: fig-foto-kaart{{label}}
@@ -274,7 +274,7 @@ ggplotly(
 #| warning: false
 
 carbon_by_plot_s_stat <- carbon_by_plot[carbon_by_plot$plot_id %in% plotinfo_s$plot_id,] %>%
-  select("period", "carbon_standing_agb_t_ha_alive", "carbon_standing_bgb_t_ha_alive",   "carbon_agb_t_ha_dead", "carbon_standing_bgb_t_ha_dead")  %>%
+  select("period", "carbon_standing_agb_t_ha_alive", "carbon_standing_bgb_t_ha_alive",   "carbon_standing_agb_t_ha_dead", "carbon_standing_bgb_t_ha_dead")  %>%
   left_join(Nplots, by="period")
 
 #Voor summary neem plots samen en bereken mean
@@ -282,13 +282,13 @@ carbon_by_plot_s_summ <- carbon_by_plot_s_stat %>%
   group_by(period) %>%
   summarise(carbon_standing_agb_t_ha_alive= sum(carbon_standing_agb_t_ha_alive), 
             carbon_standing_bgb_t_ha_alive= sum(carbon_standing_bgb_t_ha_alive), 
-            carbon_agb_t_ha_dead = sum(carbon_agb_t_ha_dead),
+            carbon_standing_agb_t_ha_dead = sum(carbon_standing_agb_t_ha_dead),
             carbon_standing_bgb_t_ha_dead = sum(carbon_standing_bgb_t_ha_dead),
             N= first(N)) 
 
 carbon_by_plot_s_summ$"Bovengronds levend" <- carbon_by_plot_s_summ$carbon_standing_agb_t_ha_alive /carbon_by_plot_s_summ$N
 carbon_by_plot_s_summ$"Ondergronds levend" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_alive /carbon_by_plot_s_summ$N
-carbon_by_plot_s_summ$"Bovengronds dood"  <- carbon_by_plot_s_summ$carbon_agb_t_ha_dead /carbon_by_plot_s_summ$N
+carbon_by_plot_s_summ$"Bovengronds dood"  <- carbon_by_plot_s_summ$carbon_standing_agb_t_ha_dead /carbon_by_plot_s_summ$N
 carbon_by_plot_s_summ$"Ondergronds dood" <- carbon_by_plot_s_summ$carbon_standing_bgb_t_ha_dead /carbon_by_plot_s_summ$N
 
 carbon_by_plot_s_summ <- carbon_by_plot_s_summ %>%
@@ -296,7 +296,7 @@ carbon_by_plot_s_summ <- carbon_by_plot_s_summ %>%
            names_to = "label", values_to = "value")
 
 carbon_by_plot_s_stat$C_tot <- carbon_by_plot_s_stat$carbon_standing_agb_t_ha_alive +
-  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_alive + carbon_by_plot_s_stat$carbon_agb_t_ha_dead +
+  carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_alive + carbon_by_plot_s_stat$carbon_standing_agb_t_ha_dead +
   carbon_by_plot_s_stat$carbon_standing_bgb_t_ha_dead
 
 carbon_by_plot_s_summ_summ <- carbon_by_plot_s_stat %>%
