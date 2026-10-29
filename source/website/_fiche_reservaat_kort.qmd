@@ -95,7 +95,7 @@ name <- metadata_s$Correct_name
 Het reservaat `r first(metadata_s$Correct_name)` (@fig-foto-kaart{{label}}) is `r first(metadata_s$reserve_area_ha)` ha groot.
 Het beheer `r ifelse(first(metadata_s$managment)==1,"","is sinds")` `r first(metadata_s$year_abandonmentNL)` `r ifelse(first(metadata_s$managment)==1,"","stopgezet")` en het gebied kreeg het officiële reservaatstatuut sinds `r first(metadata_s$year_reserveNL)`.
 Het vegetatietype is `r first(metadata_s$vegetation_typeNL)`.
-De gemiddelde jaarlijkse temperatuur bedraagt `r first(metadata_s$m_ann_temp)` °C en de gemiddelde jaarlijkse neerslag `r first(metadata_s$m_ann_prec)` mm. `r first(metadata_s$Beheer)` In dit reservaat worden enkel kernvlakte(s) opgevolgd en geen cirkelplots.
+`r first(metadata_s$Beheer)` In dit reservaat worden enkel kernvlakte(s) opgevolgd en geen cirkelplots.
 De data van de kernvlaktes worden binnenkort toegevoegd aan deze site.
 
 ```{r}
