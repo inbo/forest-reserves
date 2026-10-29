@@ -51,15 +51,15 @@ stat_carbon <- stat_carbon[!stat_carbon$plot_id %in% Kluisbosbeheer,]
 stat_dendro <- stat_dendro[!stat_dendro$plot_id %in% Kluisbosbeheer,]
 
 stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
-   select(Short_name, period, carbon_standing_agb_t_ha_alive, carbon_standing_bgb_t_ha_alive, carbon_standing_bgb_t_ha_dead, carbon_agb_t_ha_dead) 
+   select(Short_name, period, carbon_standing_agb_t_ha_alive, carbon_standing_bgb_t_ha_alive, carbon_standing_bgb_t_ha_dead, carbon_standing_agb_t_ha_dead) 
 
 stat_carbon_wide$total <- stat_carbon_wide$carbon_standing_agb_t_ha_alive +   
   stat_carbon_wide$carbon_standing_bgb_t_ha_alive +
   stat_carbon_wide$carbon_standing_bgb_t_ha_dead + 
-  stat_carbon_wide$carbon_agb_t_ha_dead
+  stat_carbon_wide$carbon_standing_agb_t_ha_dead
 
 stat_carbon_wide$above <- stat_carbon_wide$carbon_standing_agb_t_ha_alive +   
-  stat_carbon_wide$carbon_agb_t_ha_dead
+  stat_carbon_wide$carbon_standing_agb_t_ha_dead
 
 stat_carbon_wide$below <- stat_carbon_wide$carbon_standing_bgb_t_ha_alive +
   stat_carbon_wide$carbon_standing_bgb_t_ha_dead 
