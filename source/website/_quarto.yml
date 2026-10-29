@@ -82,9 +82,23 @@ flandersqmd:
       given: Gerald
       family: Louette
     email: gerald.louette@inbo.be
-    orcid: 
+    orcid: 0000-0003-3548-2364
     affiliation:
     - Instituut voor Natuur- en Bosonderzoek (INBO)
+  - name:
+      given: Geert
+      family: Sterckx
+    email: geert.sterckx@vlaanderen.be
+    orcid: 
+    affiliation:
+    - Agentschap voor Natuur en Bos (ANB)
+  - name:
+      given: Céline
+      family: Ghyselen
+    email: celine.ghyselen@vlaanderen.be
+    orcid: 
+    affiliation:
+    - Agentschap voor Natuur en Bos (ANB)
   public_report: false
   colophon: true
   floatbarrier: section
@@ -111,7 +125,7 @@ website:
         url: https://github.com/inbo/flandersqmd-website/issues
     left:
     - text: Home
-      file: index.md
+      file: index.qmd
     - text: Lijst met reservaten
       file: reservaten.qmd
   sidebar:
@@ -119,7 +133,7 @@ website:
     logo-href: https://www.vlaanderen.be/inbo/home/
     style: docked
     contents:
-      - index.md
+      - index.qmd
       - cijfers.md
       - grafieken_over_reservaten_heen.qmd
       - section: "Lijst met reservaten"
@@ -146,11 +160,11 @@ website:
             file: fiches_reservaat_qmd/kolmont.qmd
           - text: Liedekerkebos
             file: fiches_reservaat_qmd/liedekerke.qmd
-          - text: Meerdaalwoud - De Heide
+          - text: Meerdaalwoud- De Heide
             file: fiches_reservaat_qmd/de_heide.qmd
-          - text: Meerdaalwoud - Everzwijnbad
+          - text: Meerdaalwoud- Everzwijnbad
             file: fiches_reservaat_qmd/everzwijnbad.qmd
-          - text: Meerdaalwoud - Pruikenmakers
+          - text: Meerdaalwoud- Pruikenmakers
             file: fiches_reservaat_qmd/pruikemakers.qmd
           - text: Muizenbos
             file: fiches_reservaat_qmd/muizenbos.qmd
@@ -164,8 +178,14 @@ website:
             file: fiches_reservaat_qmd/wijnendalebos.qmd
           - text: Withoefse heide
             file: fiches_reservaat_qmd/withoefse_heide.qmd
-          - text: Zonienwoud - Joseph Zwaenepoel Reservaat
-            file: fiches_reservaat_qmd/zwaenepoel.qmd
+          - text: Zoniënwoud- Zwaenepoel- 1e uitbreiding
+            file: fiches_reservaat_qmd/zoni_n_uitbr_1995.qmd
+          - text: Zoniënwoud- Zwaenepoel- 2e uitbreiding
+            file: fiches_reservaat_qmd/zoni_n_uitbr_2010.qmd
+          - text: Zoniënwoud- Zwaenepoel- Haras
+            file: fiches_reservaat_qmd/zoni_n_harras_1995.qmd
+          - text: Zoniënwoud- Zwaenepoel- Oude kern
+            file: fiches_reservaat_qmd/zoni_n_kern_1983.qmd
         # ADD-RESERVES-END
       - meer.qmd
 bibliography: references.bib
