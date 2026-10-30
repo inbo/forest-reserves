@@ -40,13 +40,13 @@ Dit wordt steeds weergegeven bij de uitleg van de reservaten zelf.
 
 <summary>**Juridisch**</summary>
 
-De naam ‘bosreservaat’ is geen formele juridische term in de Vlaamse wetgeving.
+De naam "bosreservaat" is geen formele juridische term in de Vlaamse wetgeving.
 Tot 2017 was dat wel het geval, en waren de bosreservaten opgenomen in het Bosdecreet.
-Sindsdien zijn het juridisch gezien ‘natuurreservaten’ geworden (beheertype 4 binnen het Natuurdecreet), maar met een specifiek natuurstreefbeeld ['onbeheerde climaxvegetatie'](https://natuurenbos.vlaanderen.be/subsidies/subsidies-natuurbeheerplan/natuurstreefbeelden-bereik-en-beheer-climaxvegetatie){target="_blank"}.
-Voor de eenvoud blijven we deze ‘bewust onbeheerde bossen waar onderzoek gebeurt’ verder ‘bosreservaten’ noemen.
+Sindsdien zijn het juridisch gezien "natuurreservaten" geworden (beheertype 4 binnen het Natuurdecreet), maar met een specifiek natuurstreefbeeld ["onbeheerde climaxvegetatie"](https://natuurenbos.vlaanderen.be/subsidies/subsidies-natuurbeheerplan/natuurstreefbeelden-bereik-en-beheer-climaxvegetatie){target="_blank"}.
+Voor de eenvoud blijven we deze "bewust onbeheerde bossen waar onderzoek gebeurt" verder "bosreservaten" noemen.
 Het [Agentschap voor Natuur en Bos (ANB)](https://natuurenbos.be/){target="_blank"} is verantwoordelijk voor de erkenning van deze reservaten, terwijl het [Instituut voor Natuur- en Bosonderzoek (INBO)](https://www.vlaanderen.be/inbo/home/){target="_blank"} verantwoordelijk is voor het wetenschappelijk onderzoek.
 
-Het INBO voert ook onderzoek uit in andere onbeheerde climaxvegetaties, [mozaieklandschappen door extensieve begrazing](https://sites.google.com/inbo.be/procesbeheer/methodiek/gebieden){target="_blank"}.
+Het INBO voert ook onderzoek uit in andere onbeheerde climaxvegetaties, [mozaïeklandschappen door extensieve begrazing](https://sites.google.com/inbo.be/procesbeheer/methodiek/gebieden){target="_blank"}.
 
 </details>
 

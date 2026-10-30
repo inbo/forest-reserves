@@ -21,7 +21,7 @@ De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in
 
 Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven 95% betrouwbaarheidsintervallen.
 
-*Opmerkingen* In de onderstaande grafieken wordt bij de vier deelgebieden van het Zonienwoud - Joseph Zwaenepoel Reservaat de naam afgekort als ‘Z-‘ en de reservaten in Meerdaalwoud worden aangeduid met M-.
+*Opmerkingen* In de onderstaande grafieken wordt bij de vier deelgebieden van het Zoniënwoud - Joseph Zwaenepoel Reservaat de naam afgekort als `Z-` en de reservaten in Meerdaalwoud worden aangeduid met `M-`.
 
 \*: Deze bossen bestaan deels of volledig uit beheerde delen.
 
