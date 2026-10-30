@@ -10,7 +10,9 @@ project:
   - '!README.md'
   output-dir: ../../output/website
   pre-render: pre_render.R
-  post-render: _extensions/flandersqmd-website/filters/post_render.R
+  post-render:
+  - _extensions/flandersqmd-website/filters/post_render.R
+  - cname.R
 execute:
   echo: false
   warnings: true
