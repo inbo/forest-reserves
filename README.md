@@ -8,12 +8,13 @@
 # Forest reserves
 
 [Thomaes, Arno![ORCID logo](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5723-5976)[^aut][^cre][^INBO];
-[Research Institute for Nature and Forest (INBO)](mailto:info%40inbo.be)[^cph][^fnd]
+[Research Institute for Nature and Forest (INBO)](mailto:info%40inbo.be)[^cph][^fnd][^pbl]
 
 [^aut]: author
 [^cph]: copyright holder
 [^cre]: contact person
 [^fnd]: funder
+[^pbl]: publisher
 [^INBO]: Research Institute for Nature and Forest (INBO)
 
 **keywords**:  Forest reserve; Flanders; Belgium
