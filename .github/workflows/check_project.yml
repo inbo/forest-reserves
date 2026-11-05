@@ -22,3 +22,5 @@ jobs:
           cmd: |
             Rscript -e 'install.packages("pak")'
             Rscript -e 'pak::pkg_install("inbo/flandersqmd#7")'
+            Rscript -e 'pak::pkg_install("inbo/checklist@devel")'
+            Rscript -e 'pak::pkg_install("inbo/citeme@devel")'
