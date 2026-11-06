@@ -25,7 +25,7 @@ flandersqmd:
   entity: INBO
   level: 2
   title: Bosreservaten in Vlaanderen
-  subtitle:
+  subtitle: 'forresdat_release_v0.0.2 (https://github.com/inbo/forresdat)'
   shorttitle: bosreservaten
   author:
   - name:

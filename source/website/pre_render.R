@@ -52,4 +52,19 @@ autoqmd_insert_children(
   end_marker = "# ADD-RESERVES-END"
 )
 
+# set forresdat version as subtitle for citation
+version <- gsub("\\s", "_", attr(plotinfo, "forresdat"))
+forresdat <- paste0(
+  "  subtitle: '",
+  version,
+  " (https://github.com/inbo/forresdat)'"
+)
+yml_text <- readLines("_quarto.yml")
+subtitle <- grep("^\\s{2}subtitle:", yml_text)
+yml_new <- c(
+  yml_text[1:(subtitle - 1)],
+  forresdat,
+  yml_text[(subtitle + 1):length(yml_text)]
+)
+writeLines(yml_new, "_quarto.yml")
 

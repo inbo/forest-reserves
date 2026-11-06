@@ -1,5 +1,5 @@
 Titel: Bosreservaten in Vlaanderen
-Subtitel: 
+Subtitel: forresdat_release_v0.0.2 (https://github.com/inbo/forresdat)
 Auteur(s): Arno Thomaes, Luc De Keersmaeker, Marc Esprit, Stefaan Goessens, Anja Leyman, Peter Van de Kerckhove, Kris Vandekerkhove
 Contactpersoon: 
 Afbeelding voor cover: 
