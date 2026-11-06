@@ -103,7 +103,7 @@ flandersqmd:
   colophon: true
   floatbarrier: section
   year: 2026
-  url: https://inbo.github.io/bosreservaten/
+  url: https://bosreservaten.inbo.be/
 website:
   page-footer:
     left: '{{< authors >}}'
