@@ -9,6 +9,13 @@ library(forrescalc)
 plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
 metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
 
+# add forresdat version in _fiche_reservaat.qmd
+version <- gsub("\\s", "_", attr(plotinfo, "forresdat"))
+fiche_text <- readLines("_fiche_reservaat.qmd")
+text_changed <- gsub("(\\`r\\sversion\\`)", version, fiche_text)
+writeLines(text_changed, "_fiche_reservaat_versie.qmd")
+
+# Look up forest reserve names (needed for child documents)
 plotinfo2 <- left_join(plotinfo, metadata, by = "forest_reserve")
 plotinfo2 <- arrange(plotinfo2, Nr)
 
@@ -24,7 +31,7 @@ reserves_kort_correct <- metadata[metadata$forest_reserve %in% reserves_kort,]$L
 out_files <- autoqmd_generate_children(
   selected_reserve = reserves,
   label = reserves_label,
-  template = "_fiche_reservaat.qmd",
+  template = "_fiche_reservaat_versie.qmd",
   child_dir = "fiches_reservaat_qmd",
   freeze = "label"
 )
@@ -53,7 +60,6 @@ autoqmd_insert_children(
 )
 
 # set forresdat version as subtitle for citation
-version <- gsub("\\s", "_", attr(plotinfo, "forresdat"))
 forresdat <- paste0(
   "  subtitle: '",
   version,
