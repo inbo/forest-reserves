@@ -2,22 +2,53 @@ library(flandersqmd)
 library(knitr)
 library(quarto)
 library(purrr)
+library(dplyr)
+library(stringr)
+library(forrescalc)
 
-plotinfo <- read.csv2('../../data/plotinfo.csv', header = TRUE, dec = ',', sep = ';')
-metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';')
+plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
 
-reserves <- sort(unique(plotinfo$forest_reserve))
+# add forresdat version in _fiche_reservaat.qmd
+version <- gsub("\\s", "_", attr(plotinfo, "forresdat"))
+fiche_text <- readLines("_fiche_reservaat.qmd")
+text_changed <- gsub("(\\`r\\sversion\\`)", version, fiche_text)
+writeLines(text_changed, "_fiche_reservaat_versie.qmd")
+
+# Look up forest reserve names (needed for child documents)
+plotinfo2 <- left_join(plotinfo, metadata, by = "forest_reserve")
+plotinfo2 <- arrange(plotinfo2, Nr)
+
+reserves <- unique(plotinfo2$forest_reserve)
 reserves_label <- gsub("\\s", "_", tolower(reserves))
-reserves_correct <- metadata[metadata$forest_reserve %in% reserves, "Correct_name"]
+reserves_correct <- metadata[metadata$forest_reserve %in% reserves,]$Label_name
+
+reserves_kort <- metadata$forest_reserve[!(metadata$forest_reserve %in% reserves)]
+reserves_label_kort <- gsub("\\s", "_", tolower(reserves_kort))
+reserves_kort_correct <- metadata[metadata$forest_reserve %in% reserves_kort,]$Label_name
 
 # Generate child documents
 out_files <- autoqmd_generate_children(
   selected_reserve = reserves,
   label = reserves_label,
-  template = "_fiche_reservaat.qmd",
+  template = "_fiche_reservaat_versie.qmd",
   child_dir = "fiches_reservaat_qmd",
   freeze = "label"
 )
+
+# Generate child documents
+out_files_kort <- autoqmd_generate_children(
+  selected_reserve = reserves_kort,
+  label = reserves_label_kort,
+  template = "_fiche_reservaat_kort.qmd",
+  child_dir = "fiches_reservaat_qmd",
+  freeze = "label"
+)
+
+out_files <- c(out_files, out_files_kort)
+reserves_correct <- c(reserves_correct, reserves_kort_correct)
+out_files <- out_files[str_order(reserves_correct)]
+reserves_correct <- sort(reserves_correct)
 
 # insert entries into the Quarto configuration
 autoqmd_insert_children(
@@ -27,3 +58,19 @@ autoqmd_insert_children(
   start_marker = "# ADD-RESERVES-START",
   end_marker = "# ADD-RESERVES-END"
 )
+
+# set forresdat version as subtitle for citation
+forresdat <- paste0(
+  "  subtitle: '",
+  version,
+  " (https://github.com/inbo/forresdat)'"
+)
+yml_text <- readLines("_quarto.yml")
+subtitle <- grep("^\\s{2}subtitle:", yml_text)
+yml_new <- c(
+  yml_text[1:(subtitle - 1)],
+  forresdat,
+  yml_text[(subtitle + 1):length(yml_text)]
+)
+writeLines(yml_new, "_quarto.yml")
+

@@ -1,5 +1,5 @@
 ---
-title: Meetnet Spontane Dynamiek Bosreservaten
+title: Vergelijking tussen de reservaten
 toc: false
 ---
 
@@ -8,46 +8,84 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE)
 
 library(tidyverse)
+library(utils)
 library(plotly)
 library(crosstalk)
+library(forrescalc)
+library(frictionless)
 ```
 
-## Resultaten
+Bosreservaten worden met een tussentijd van 10 jaar opgemeten om de evolutie in de tijd vast te stellen.
+De metingen uit de verschillende periodes worden hier aangegeven als periode 1 (2000-2009), 2 (2010-2019) en 3 (2020-2029).
+De meeste bosreservaten zijn in elke periode opgemeten, andere zijn pas later in het netwerk opgenomen en hebben dan enkel metingen in de latere periodes.
+
+Het punt geeft de gemiddelde waarde voor het reservaat, de foutenvlaggen geven 95% betrouwbaarheidsintervallen.
+
+*Opmerkingen* In de onderstaande grafieken wordt bij de vier deelgebieden van het Zoniënwoud - Joseph Zwaenepoel Reservaat de naam afgekort als `Z-` en de reservaten in Meerdaalwoud worden aangeduid met `M-`.
+
+\*: Deze bossen bestaan deels of volledig uit beheerde delen.
 
 ::: panel-tabset
-## Biomassa
+## Koolstofvoorraad
 
 ```{r}
-setwd("C:/Users/els_lommelen/Documents/gitrepos/forest-reserves/data")
-stat_carbon <- read.csv2('carbon_by_plot.csv', header = TRUE, dec=',', sep=';')
-stat_dendro <- read.csv2('dendro_by_plot.csv', header = TRUE, dec=',', sep=';')
-plotinfo <- read.csv2('plotinfo.csv', header = TRUE, dec=',', sep=';')
+#| warning: false
 
-plotinfo$forest_reserve <- as.factor(plotinfo$forest_reserve)
+stat_carbon <- read_forresdat_table("carbon_by_plot", plottype = "CP")
+stat_dendro <- read_forresdat_table("dendro_by_plot", plottype = "CP")
+plotinfo <- read_forresdat_table("plotinfo", plottype = "CP", join_plotinfo = FALSE)
+
+metadata <- read.csv2('../../data/metadata.csv', header = TRUE, dec = ',', sep = ';', fileEncoding = "latin1")
+
+version <- gsub("\\s", "_", attr(stat_carbon, "forresdat"))
+
+plotinfo <- left_join(plotinfo, metadata, by = "forest_reserve")
+#plotinfo$Short_name <- as.factor(plotinfo$Short_name)
+
+Qinterval <- qnorm(1-0.05/2)
+
+#Kluisbos
+Kluisbosbeheer <- c(seq(1574, 1628, 1))
+plotinfo <- plotinfo[!plotinfo$plot_id %in% Kluisbosbeheer,]
+stat_carbon <- stat_carbon[!stat_carbon$plot_id %in% Kluisbosbeheer,]
+stat_dendro <- stat_dendro[!stat_dendro$plot_id %in% Kluisbosbeheer,]
 
 stat_carbon_wide <- left_join(stat_carbon, plotinfo, by=c("plot_id","period")) %>%
-   select(forest_reserve, period, BiomassAboveGr_t_ha, BiomassBelowGr_t_ha,
-           BiomassTotalLiving_t_ha, CarbonAboveGr_t_ha, CarbonBelowGr_t_ha,
-           CarbonTotalLiving_t_ha ) %>%
-  pivot_longer(cols = c("BiomassAboveGr_t_ha", "BiomassBelowGr_t_ha",
-           "BiomassTotalLiving_t_ha", "CarbonAboveGr_t_ha", "CarbonBelowGr_t_ha",
-           "CarbonTotalLiving_t_ha"),
+   select(Short_name, period, carbon_standing_agb_t_ha_alive, carbon_standing_bgb_t_ha_alive, carbon_standing_bgb_t_ha_dead, carbon_standing_agb_t_ha_dead) 
+
+stat_carbon_wide$total <- stat_carbon_wide$carbon_standing_agb_t_ha_alive +   
+  stat_carbon_wide$carbon_standing_bgb_t_ha_alive +
+  stat_carbon_wide$carbon_standing_bgb_t_ha_dead + 
+  stat_carbon_wide$carbon_standing_agb_t_ha_dead
+
+stat_carbon_wide$above <- stat_carbon_wide$carbon_standing_agb_t_ha_alive +   
+  stat_carbon_wide$carbon_standing_agb_t_ha_dead
+
+stat_carbon_wide$below <- stat_carbon_wide$carbon_standing_bgb_t_ha_alive +
+  stat_carbon_wide$carbon_standing_bgb_t_ha_dead 
+
+stat_carbon_wide <- stat_carbon_wide %>%
+  pivot_longer(cols = c("total", "above", "below"),
            names_to = "label", values_to = "value") %>%
-  group_by(forest_reserve, period, label) %>%
-  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
+  group_by(Short_name, period, label) %>%
+  summarise(mean= mean(value), uci_diff= Qinterval*sd(value)/sqrt(n()))  %>%
   pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
   mutate(offset_period = (period - 2.5) * 0.2)
 
- stat_carbon_wide$forest_reserve <- fct_reorder(stat_carbon_wide$forest_reserve, stat_carbon_wide$mean_BiomassAboveGr_t_ha)
+stat_carbon_wide$Short_name <- fct_reorder(stat_carbon_wide$Short_name, stat_carbon_wide$mean_total)
 
 ```
 
+In dit tabblad worden de resultaten voor de bovengrondse en ondergrondse (wortels) koolstofvoorraad van levende en dode bomen weergegeven, op basis van de volumeresultaten van de cirkelplots.
+Volumes zijn omgerekend naar koolstofvoorraad door rekening te houden met het koolstofgehalte en specifieke houtdensiteiten per boomsoort.
+
 ```{r}
+#| warning: false
+
 sd <- SharedData$new(stat_carbon_wide)
 
 bscols(widths = c(4, 4),
-       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
-       filter_checkbox("period", "Select period", sd, ~period))
+       filter_checkbox("period", "Selecteer periode", sd, ~period))
 
 # volgende code is qua logica gebaseerd op https://stackoverflow.com/questions/50921790/split-points-by-a-factor-in-a-plotly-scatter-plot met
 # forest_reserve = cluster
@@ -57,107 +95,155 @@ bscols(widths = c(4, 4),
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_BiomassAboveGr_t_ha, y = ~(as.numeric(forest_reserve) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_BiomassAboveGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Above ground biomass (ton /ha)"),
+        plot_ly(x = ~mean_total, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_total)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Totale koolstofvoorraad (ton C/ha)"),
                yaxis = list(
-                 title = "Forest reserve",
+                 title = "Bosreservaten",
                  zeroline = FALSE,
                  tickmode = "array",
-                 tickvals = ~unique(as.numeric(sort(as.factor(forest_reserve)))),
-                 ticktext = ~unique(sort(as.factor(forest_reserve)))#,
-                 #range = c(~min(as.numeric(as.factor(forest_reserve))) - 1, ~max(as.numeric(as.factor(forest_reserve))) + 1)
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
                )
         ),
        sd %>%
-        plot_ly(x = ~mean_BiomassBelowGr_t_ha , y = ~(as.numeric(forest_reserve) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_BiomassBelowGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Below ground biomass (ton /ha)"),
+        plot_ly(x = ~mean_above, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_above)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Bovengrondse koolstofvoorraad (ton C/ha)"),
                yaxis = list(
-                 title = "Forest reserve",
+                 title = "Bosreservaten",
                  zeroline = FALSE,
                  tickmode = "array",
-                 tickvals = ~unique(as.numeric(sort(as.factor(forest_reserve)))),
-                 ticktext = ~unique(sort(as.factor(forest_reserve)))#,
-                 #range = c(~min(as.numeric(as.factor(forest_reserve))) - 1, ~max(as.numeric(as.factor(forest_reserve))) + 1)
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
+       sd %>%
+        plot_ly(x = ~mean_below, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_below)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Ondergrondse koolstofvoorraad (ton C/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        )
+)
+```
+
+## Houtvolume
+
+In dit tabblad worden de resultaten voor de bovengrondse volumes (levend en dood) weergegeven, op basis van de resultaten van de cirkelplots.
+
+```{r}
+
+#stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
+stat_dendro[is.na(stat_dendro)] <- 0
+
+stat_dendro$vol_log_m3_ha <- ifelse(stat_dendro$vol_log_m3_ha==0, stat_dendro$vol_log_above30cm_m3_ha + stat_dendro$vol_lis_10_30cm_m3_ha, stat_dendro$vol_log_m3_ha)
+
+stat_dendro$vol_deadw_m3_ha <- stat_dendro$vol_dead_standing_m3_ha + stat_dendro$vol_log_m3_ha
+
+stat_dendro$total <- stat_dendro$vol_deadw_m3_ha + stat_dendro$vol_alive_m3_ha
+
+stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %>%
+  select(Short_name, period, total, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
+  pivot_longer(cols = c("total", "vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha"),
+           names_to = "label", values_to = "value") %>%
+  group_by(Short_name, period, label) %>%
+  summarise(mean= mean(value), uci_diff= Qinterval*sd(value)/sqrt(n()))  %>%
+  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff")) %>%
+  mutate(offset_period = (period - 2.5) * 0.2)
+
+stat_dendro_wide$Short_name <- fct_reorder(stat_dendro_wide$Short_name, stat_dendro_wide$mean_total)
+```
+
+```{r}
+#| warning: false
+
+sd <- SharedData$new(stat_dendro_wide)
+
+bscols(widths = c(4, 4),
+       filter_checkbox("period", "Selecteer periode", sd, ~period))
+
+bscols(widths = c(6, 6),
+       sd %>%
+        plot_ly(x = ~mean_total, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Totaal volume (m³/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
+       sd %>%
+        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume levende bomen (m³/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
+       sd %>%
+        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
+                error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume dood hout (m³/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
                )
         )
 )
 
 bscols(widths = c(6, 6),
        sd %>%
-        plot_ly(x = ~mean_CarbonAboveGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_CarbonAboveGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Above ground carbon (ton /ha)"),
-               yaxis = list(
-                 title = "Forest reserve",
-                 categoryorder = "category ascending" #redraw y-asis to omit unused forest_reserves
-               )),
-       sd %>%
-        plot_ly(x = ~mean_CarbonBelowGr_t_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_CarbonBelowGr_t_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Below ground carbon (ton /ha)"),
-               yaxis = list(
-                 title = "Forest reserve",
-                 categoryorder = "category ascending"
-              )))
-```
-
-## Dendrometerie
-
-```{r}
-
-stat_dendro <- stat_dendro[!is.na(stat_dendro$vol_deadw_m3_ha),]
-
-stat_dendro_wide <- left_join(stat_dendro, plotinfo, by=c("plot_id","period")) %>%
-  select(forest_reserve, period, vol_alive_m3_ha, vol_deadw_m3_ha, vol_dead_standing_m3_ha, vol_log_m3_ha) %>%
-  pivot_longer(cols = c("vol_alive_m3_ha", "vol_deadw_m3_ha", "vol_dead_standing_m3_ha", "vol_log_m3_ha"),
-           names_to = "label", values_to = "value") %>%
-  group_by(forest_reserve, period, label) %>%
-  summarise(mean= mean(value), uci_diff= qnorm(1-0.05/2)*sd(value)/sqrt(n()))  %>%
-  pivot_wider(names_from = "label", values_from = c("mean", "uci_diff"))
-
-stat_dendro_wide$forest_reserve <- fct_reorder(stat_dendro_wide$forest_reserve, stat_dendro_wide$mean_vol_alive_m3_ha)
-```
-
-```{r}
-
-sd <- SharedData$new(stat_dendro_wide)
-
-bscols(widths = c(4, 4),
-       filter_select("forest_reserve", "Select forest reserve", sd, ~forest_reserve),
-       filter_checkbox("period", "Select period", sd, ~period))
-
-bscols(widths = c(6, 6),
-       sd %>%
-        plot_ly(x = ~mean_vol_alive_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_vol_alive_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume living trees (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")),
-       sd %>%
-        plot_ly(x = ~mean_vol_deadw_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
-                error_x = ~list(array = uci_diff_vol_deadw_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")))
-
-bscols(widths = c(6, 6),
-       sd %>%
-        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_dead_standing_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_dead_standing_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume standing dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")),
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume staand dood hout (m³/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        ),
        sd %>%
-        plot_ly(x = ~mean_vol_log_m3_ha, y = ~forest_reserve, type = 'scatter', split = ~period, mode = 'markers',
+        plot_ly(x = ~mean_vol_log_m3_ha, y = ~(as.numeric(Short_name) + offset_period), type = 'scatter', split = ~period, mode = 'markers',
                 error_x = ~list(array = uci_diff_vol_log_m3_ha)) %>%
-        layout(legend = list(title = list(text = 'Period')),
-               xaxis = list(title = "Volume lying dead wood (m³ /ha)"),
-               yaxis = list(title = "Forest reserve")))
+        plotly::layout(legend = list(title = list(text = 'Periode')),
+               xaxis = list(title = "Volume liggend dood hout (m³/ha)"),
+               yaxis = list(
+                 title = "Bosreservaten",
+                 zeroline = FALSE,
+                 tickmode = "array",
+                 tickvals = ~unique(as.numeric(sort(as.factor(Short_name)))),
+                 ticktext = ~unique(sort(as.factor(Short_name)))
+               )
+        )
+)
 ```
+:::
+
+::: {style="text-align: right"}
+Deze grafieken werden gemaakt met open source data gepubliceerd op GitHub: [`r version`](https://github.com/inbo/forresdat){target="_blank"}.
 :::

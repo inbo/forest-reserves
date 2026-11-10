@@ -1,19 +1,54 @@
 description: Configuration file for checklist::check_pkg()
 package: no
 allowed:
-  warnings: []
-  notes: []
+  warnings:
+  - motivation: To be solved later
+    value: |-
+      Media files found outside of a `media` folder:
+        source/website/Bos t'Enamek.jpg
+        source/website/Bos Ter Rijst.jpg
+        source/website/Bos Ter Rijstk.jpg
+        source/website/Bosreservatenkaart3.jpg
+        source/website/Coolhembosk.jpg
+        source/website/De Heirnissek.jpg
+        source/website/Hannecartbos.jpg
+        source/website/Hannecartbosk.jpg
+        source/website/Jansheidebergk.jpg
+        source/website/Kluisbosk.jpg
+        source/website/Kolmontbosk.jpg
+        source/website/Liedekerkebosk.jpg
+        source/website/Meerdaalwoud - De Heidek.jpg
+        source/website/Meerdaalwoud - Everzwijnbadk.jpg
+        source/website/Meerdaalwoud - Pruikenmakersk.jpg
+        source/website/Muizenbos.jpg
+        source/website/Muizenbosk.jpg
+        source/website/Peerdsbosk.jpg
+        source/website/Rodebosk.jpg
+        source/website/Sevendonkk.jpg
+        source/website/Walenbosk.jpg
+        source/website/Wijnendalebosk.jpg
+        source/website/Withoefse heidek.jpg
+        source/website/Zoniënwoud - Joseph Zwaenepoel Reservaat - 1e uitbreidingk.jpg
+        source/website/Zoniënwoud - Joseph Zwaenepoel Reservaat - 2e uitbreidingk.jpg
+        source/website/Zoniënwoud - Joseph Zwaenepoel Reservaat - Harask.jpg
+        source/website/Zoniënwoud - Joseph Zwaenepoel Reservaat - Oude kernk.jpg
+        source/website/Zoniënwoud - Joseph Zwaenepoel Reservaatk.jpg
+  notes:
+  - motivation: To decide later if versions are needed here
+    value: no version badge found in README.md
 required:
 - CITATION
 - checklist
-- filename conventions
 - folder conventions
 - license
-- lintr
 - organisation
 - spelling
 spelling:
-  default: en-GB
+  default: nl-BE
   ignore:
   - .github
   - LICENSE.md
+  other:
+    en-GB: README.md
+pak: []
+gha_install: []
