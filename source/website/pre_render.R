@@ -16,7 +16,7 @@ text_changed <- gsub("(\\`r\\sversion\\`)", version, fiche_text)
 writeLines(text_changed, "_fiche_reservaat_versie.qmd")
 
 # Look up forest reserve names (needed for child documents)
-plotinfo2 <- left_join(plotinfo, metadata, by = "forest_reserve")
+plotinfo2 <- inner_join(plotinfo, metadata, by = "forest_reserve")
 plotinfo2 <- arrange(plotinfo2, Nr)
 
 reserves <- unique(plotinfo2$forest_reserve)

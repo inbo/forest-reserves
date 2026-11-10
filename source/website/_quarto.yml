@@ -144,50 +144,8 @@ website:
         # The below content between START and END comments is auto-generated
         # Do not change manually
         # ADD-RESERVES-START
-          - text: Bos t'Ename
-            file: fiches_reservaat_qmd/ename.qmd
-          - text: Bos Ter Rijst
-            file: fiches_reservaat_qmd/bos_terrijst.qmd
-          - text: Coolhembos
-            file: fiches_reservaat_qmd/coolhembos.qmd
-          - text: De Heirnisse
-            file: fiches_reservaat_qmd/heirnisse.qmd
-          - text: Hannecartbos
-            file: fiches_reservaat_qmd/hannecartbos.qmd
           - text: Jansheideberg
             file: fiches_reservaat_qmd/jansheideberg.qmd
-          - text: Kluisbos
-            file: fiches_reservaat_qmd/kluisbos.qmd
-          - text: Kolmontbos
-            file: fiches_reservaat_qmd/kolmont.qmd
-          - text: Liedekerkebos
-            file: fiches_reservaat_qmd/liedekerke.qmd
-          - text: Meerdaalwoud- De Heide
-            file: fiches_reservaat_qmd/de_heide.qmd
-          - text: Meerdaalwoud- Everzwijnbad
-            file: fiches_reservaat_qmd/everzwijnbad.qmd
-          - text: Meerdaalwoud- Pruikenmakers
-            file: fiches_reservaat_qmd/pruikemakers.qmd
-          - text: Muizenbos
-            file: fiches_reservaat_qmd/muizenbos.qmd
-          - text: Rodebos
-            file: fiches_reservaat_qmd/rodebos.qmd
-          - text: Sevendonk
-            file: fiches_reservaat_qmd/sevendonck.qmd
-          - text: Walenbos
-            file: fiches_reservaat_qmd/walenbos.qmd
-          - text: Wijnendalebos
-            file: fiches_reservaat_qmd/wijnendalebos.qmd
-          - text: Withoefse heide
-            file: fiches_reservaat_qmd/withoefse_heide.qmd
-          - text: Zoniënwoud- Zwaenepoel- 1e uitbreiding
-            file: fiches_reservaat_qmd/zoni_n_uitbr_1995.qmd
-          - text: Zoniënwoud- Zwaenepoel- 2e uitbreiding
-            file: fiches_reservaat_qmd/zoni_n_uitbr_2010.qmd
-          - text: Zoniënwoud- Zwaenepoel- Haras
-            file: fiches_reservaat_qmd/zoni_n_harras_1995.qmd
-          - text: Zoniënwoud- Zwaenepoel- Oude kern
-            file: fiches_reservaat_qmd/zoni_n_kern_1983.qmd
         # ADD-RESERVES-END
       - meer.qmd
 bibliography: references.bib
