@@ -1,0 +1,41 @@
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  quarto:
+    runs-on: ubuntu-24.04
+    name: check-package
+    env:
+      RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
+      QUARTO_SOURCE: "source/website"
+      QUARTO_OUTPUT: "output/website"
+    permissions:
+      contents: read
+    steps:
+      - name: "Render quarto"
+        uses: inbo/actions/quarto_render@main
+        with:
+          extra-packages:
+            crosstalk
+            DT
+            inbo/flandersqmd#7
+            inbo/forrescalc@bugfix
+            frictionless
+            inbo/INBOtheme
+            kableExtra
+            knitr
+            plotly
+            tidyverse
+
+  publish:
+    name: deploy-gh-pages
+    runs-on: ubuntu-24.04
+    needs: quarto
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: "Deploy gh-pages"
+        uses: inbo/actions/quarto_publish@main

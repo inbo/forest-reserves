@@ -110,7 +110,8 @@ return {
     if is_empty(meta.flandersqmd.url) then
       z = z .. '<h1 class = "missing">!!! Missing flandersqmd.url !!!</h1>'
     else
-      z = z .. pandoc.utils.stringify(meta.flandersqmd.url)
+      z = z .. ' <a href = "' .. pandoc.utils.stringify(meta.flandersqmd.url) ..
+        '">' .. pandoc.utils.stringify(meta.flandersqmd.url) .. '</a>'
     end
     z = z .. '</div>'
 

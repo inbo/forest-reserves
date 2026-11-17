@@ -1,25 +1,20 @@
 {
-  "license": "CC BY 4.0",
   "access_right": "open",
-  "language": "nld",
-  "title": "Forest reserves",
-  "description": "<p>Website that presents the results of the monitoring programme on strict forest reserves in Flanders, Belgium.<\/p>",
-  "keywords": [
-    "Forest reserve",
-    "Flanders",
-    "Belgium"
+  "communities": [
+    {
+      "identifier": "inbo"
+    }
   ],
-  "upload_type": "software",
   "contributors": [
     {
       "name": "Thomaes, Arno",
       "affiliation": "Research Institute for Nature and Forest (INBO)",
       "orcid": "0000-0001-5723-5976",
-      "type": "contactperson"
+      "type": "ContactPerson"
     },
     {
       "name": "Research Institute for Nature and Forest (INBO)",
-      "type": "rightsholder"
+      "type": "RightsHolder"
     }
   ],
   "creators": [
@@ -29,9 +24,15 @@
       "orcid": "0000-0001-5723-5976"
     }
   ],
-  "communities": [
-    {
-      "identifier": "inbo"
-    }
-  ]
+  "description": "<p>Website that presents the results of the monitoring programme on strict forest reserves in Flanders, Belgium.<\/p>",
+  "keywords": [
+    "Forest reserve",
+    "Flanders",
+    "Belgium"
+  ],
+  "language": "nld",
+  "license": "cc-by-4.0",
+  "publisher": "Research Institute for Nature and Forest (INBO)",
+  "title": "Forest reserves",
+  "upload_type": "software"
 }
