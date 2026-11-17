@@ -5,9 +5,9 @@ allowed:
   - motivation: To be solved later
     value: |-
       Media files found outside of a `media` folder:
-        source/website/Bos t'Enamek.jpg
         source/website/Bos Ter Rijst.jpg
         source/website/Bos Ter Rijstk.jpg
+        source/website/Bos t'Enamek.jpg
         source/website/Bosreservatenkaart3.jpg
         source/website/Coolhembosk.jpg
         source/website/De Heirnissek.jpg
