@@ -127,7 +127,7 @@ website:
         url: https://github.com/inbo/flandersqmd-website/issues
     left:
     - text: Home
-      file: index.md
+      file: index.qmd
     - text: Lijst met reservaten
       file: reservaten.qmd
   sidebar:
@@ -135,7 +135,7 @@ website:
     logo-href: https://www.vlaanderen.be/inbo/home/
     style: docked
     contents:
-      - index.md
+      - index.qmd
       - cijfers.md
       - grafieken_over_reservaten_heen.qmd
       - section: "Lijst met reservaten"
