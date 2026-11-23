@@ -9,6 +9,8 @@ jobs:
     name: render
     env:
       RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
+      QUARTO_SOURCE: "source/website"
+      QUARTO_OUTPUT: "output/website"
     permissions:
       contents: read
     steps:
