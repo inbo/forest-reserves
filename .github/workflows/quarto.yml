@@ -6,17 +6,17 @@ on:
 jobs:
   quarto:
     runs-on: ubuntu-24.04
-    name: check-package
+    name: render
     env:
       RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
-      QUARTO_SOURCE: "source/website"
-      QUARTO_OUTPUT: "output/website"
     permissions:
       contents: read
     steps:
       - name: "Render quarto"
         uses: inbo/actions/quarto_render@main
         with:
+          path: "source/website"
+          output: "output/website"
           extra-packages:
             crosstalk
             DT
